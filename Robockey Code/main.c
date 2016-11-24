@@ -10,28 +10,34 @@
 #include <avr/io.h>
 #include "m_general.h"
 #include "m_bus.h"
-//#include "m_rf.h"
+#include "m_rf.h"
 #include "m_usb.h"
 #include "m_wii.h"
 // output pins to motor driver
 #define SYSTEM_FREQ 16000000 // system clock frequency, Hz
-#define LEFT_ENABLE 2
-#define LEFT_DIRECTION 3
-#define RIGHT_ENABLE 4
-#define RIGHT_DIRECTION 5
+#define LEFT_ENABLE 0
+#define LEFT_DIRECTION 1
+#define RIGHT_ENABLE 2
+#define RIGHT_DIRECTION 3
+//RF Parameters
 #define CHANNEL 1
-#define ADDRESS 78
-#define PACKET_LENGTH 3 // not sure if 3 or 24
-
+#define ADDRESS 40 // address for robot 1
+#define PACKET_LENGTH 10 // bytes
+char buffer[PACKET_LENGTH];
+bool packet_received = false;
+// Important locations: currently arbitrary
+#define X_GOAL_B 500
+#define Y_GOAL_B_HIGH 250
+#define Y_GOAL_B_LOW -250
 /*
  * Wii variables
  */
 unsigned int blobs[] = {0,0,0,0,0,0,0,0,0,0,0,0}; // 12 element buffer for Wii data
-unsigned int starLocPrev[] = {0,0,0,0,0,0,0,0};
-bool missedPointPrev = false;
-double theta;
-double positionX;
-double positionY;
+unsigned int starLocPrev[] = {0,0,0,0,0,0,0,0}; // location of previous stars
+bool missedPointPrev = false; // whether we were missing a point previously
+double theta; // robot's current angle wrt line from center to goal B
+double positionX; // robot's current x position
+double positionY; // robot's current y position
 
 void init(void) {
   m_clockdivide(0); // set system clock speed
@@ -102,6 +108,23 @@ void init(void) {
    */
 
   m_wii_open();
+
+  /*
+   * Initialize mRF module
+   */
+
+   //m_rf_open(CHANNEL, ADDRESS, PACKET_LENGTH);
+
+   //m_red(OFF);
+
+   /*
+    * USB Initialization
+    */
+
+  m_usb_init();
+  while(!m_usb_isconnected()); // wait for a connection
+
+  m_red(OFF);
 }
 
 /*
@@ -142,7 +165,7 @@ void getLocation() {
 
   missedPointPrev = missedPoint;
   missedPoint = false;
-  unsigned int starLocations[] = {blobs[0], blobs[1], blobs[3], blobs[4], blobs[6], blobs[7], blobs[9], blobs[10]};
+  unsigned int starLocations[] = {blobs[0], blobs[3], blobs[6], blobs[9], blobs[1], blobs[4], blobs[7], blobs[10]};
   int n;
   for(n=0;n<=3;n++) {
     if(starLocations[n] == 1023 || starLocations[n+4] == 1023) {
@@ -169,6 +192,9 @@ void getLocation() {
   int P2max2 = 2;
   int D2max = 0;
 
+  /*
+   * Case: no missing point
+   */
   if(!missedPoint) {
     int i;
     for(i=0;i<=2;i++) {
@@ -197,17 +223,103 @@ void getLocation() {
       c=Pmax2;
       a=Pmax1;
     }
-    theta = atan2(starLocations[a+4]-starLocations[c+4],starLocations[a]-starLocations[c]); // -pi/2
-    positionX = (starLocations[a]+starLocations[c])/2-512;
-    positionY = (starLocations[a+4]+starLocations[c+4])/2-384;
+    // Transform into final position and orientation
+    double theta_frame = atan2(starLocations[a+4]-starLocations[c+4],starLocations[a]-starLocations[c]); // -pi/2
+    double positionX_frame = (starLocations[a]+starLocations[c])/2.-512;
+    double positionY_frame = (starLocations[a+4]+starLocations[c+4])/2.-384;
+
+    positionX = positionY_frame*cos(theta_frame)-positionX_frame*sin(theta_frame);
+    positionY = -positionX_frame*cos(theta_frame)-positionY_frame*sin(theta_frame);
+    theta = -theta+3.14159/2;
+    positionX = positionX_frame;
+    positionY = positionY_frame;
+    theta = theta_frame;
   }
+}
+
+void printLocation() {
+  m_usb_tx_char('a');
+  m_usb_tx_int((int) (theta*100));
+  m_usb_tx_char('\r');
+  m_usb_tx_char('\n');
+  m_usb_tx_char('x');
+  m_usb_tx_int(positionX);
+  m_usb_tx_char('\r');
+  m_usb_tx_char('\n');
+  m_usb_tx_char('y');
+  m_usb_tx_int(positionY);
+  m_usb_tx_char('\r');
+  m_usb_tx_char('\n');
+  m_usb_tx_char('\r');
+  m_usb_tx_char('\n');
+
+  //   m_usb_tx_char('a');
+  // m_usb_tx_int(blobs[0]);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('x');
+  // m_usb_tx_int(blobs[1]);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('y');
+  // m_usb_tx_int(blobs[3]);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  //   m_usb_tx_int(blobs[4]);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  //   m_usb_tx_int(blobs[6]);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  //   m_usb_tx_int(blobs[7]);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  //   m_usb_tx_int(blobs[9]);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  //   m_usb_tx_int(blobs[10]);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+
+}
+
+void goToGoal() {
+  double theta_goal_high = atan2(Y_GOAL_B_HIGH-positionY,X_GOAL_B-positionX); // angle to high side of the goal
+  double theta_goal_low = atan2(Y_GOAL_B_LOW-positionY,X_GOAL_B-positionX); // angle to low side of the goal
+  if(theta-theta_goal_high>0) { // rotate right
+    driveLeftMotor(true,0xFFFF/2);
+    driveRightMotor(false,0xFFFF/2);
+  } else if(theta-theta_goal_low<0) { // rotate left
+    driveLeftMotor(false,0xFFFF/2);
+    driveRightMotor(true,0xFFFF/2);
+  } else {
+    driveLeftMotor(true,0xFFFF/2);
+    driveRightMotor(true,0xFFFF/2);
+  }
+}
+
+void motorTest(void) {
+  driveLeftMotor(true,0xFFFF/2);
+  driveRightMotor(false,0xFFFF/2);
+  m_wait(2000);
+  driveLeftMotor(false,0xFFFF/2);
+  driveRightMotor(true,0xFFFF/2);
+  m_wait(2000);
 }
 
 int main(void) {
   init();
-  driveLeftMotor(true,0.2);
-  driveRightMotor(false,0.7);
+  //motorTest();
   while(1) {
+    getLocation();
+    printLocation();
+    m_wait(2000);
+    //motorTest();
+    //if(packet_received) {
+      //goToGoal();
+    //}
   }
 }
 
@@ -226,3 +338,9 @@ ISR(TIMER1_COMPB_vect) {
 ISR(TIMER1_COMPC_vect) {
   clear(PORTB,RIGHT_ENABLE);
 }
+
+// Activated when RF packet received
+// ISR(INT2_vect) {
+//   packet_received = true;
+//   m_rf_read(buffer, PACKET_LENGTH);
+// }
