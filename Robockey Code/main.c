@@ -15,10 +15,10 @@
 #include "m_wii.h"
 // output pins to motor driver
 #define SYSTEM_FREQ 16000000 // system clock frequency, Hz
-#define LEFT_ENABLE 0
-#define LEFT_DIRECTION 1
-#define RIGHT_ENABLE 2
-#define RIGHT_DIRECTION 3
+#define RIGHT_ENABLE 0
+#define RIGHT_DIRECTION 1
+#define LEFT_ENABLE 2
+#define LEFT_DIRECTION 3
 //RF Parameters
 #define CHANNEL 1
 #define ADDRESS 40 // address for robot 1
@@ -26,14 +26,15 @@
 char buffer[PACKET_LENGTH];
 bool packet_received = false;
 // Important locations: currently arbitrary
-#define X_GOAL_B 500
-#define Y_GOAL_B_HIGH 250
-#define Y_GOAL_B_LOW -250
+#define X_GOAL_B -310
+#define Y_GOAL_B_HIGH 150
+#define Y_GOAL_B_LOW 20
 /*
  * Wii variables
  */
 unsigned int blobs[] = {0,0,0,0,0,0,0,0,0,0,0,0}; // 12 element buffer for Wii data
 unsigned int starLocPrev[] = {0,0,0,0,0,0,0,0}; // location of previous stars
+bool missedPoint = false;
 bool missedPointPrev = false; // whether we were missing a point previously
 double theta; // robot's current angle wrt line from center to goal B
 double positionX; // robot's current x position
@@ -70,7 +71,7 @@ void init(void) {
   set(TIMSK1,TOIE1); // enable overflow interrupt
 
   /* Channel B setup */ 
-  OCR1B = 0;
+  OCR1B = 1;
   set(DDRB,6); // enable output for channel B (left motor)
   set(TIMSK1,OCIE1B); // enable ch B interrupt
 
@@ -79,7 +80,7 @@ void init(void) {
   set(TCCR1A,COM1B0);
 
   /* Channel C setup */
-  OCR1C = 0;
+  OCR1C = 1;
   set(DDRB,7); // enable output for channel C (right motor)
   set(TIMSK1,OCIE1C); // enable ch C interrupt
 
@@ -121,8 +122,8 @@ void init(void) {
     * USB Initialization
     */
 
-  m_usb_init();
-  while(!m_usb_isconnected()); // wait for a connection
+  //m_usb_init();
+  //while(!m_usb_isconnected()); // wait for a connection
 
   m_red(OFF);
 }
@@ -161,27 +162,27 @@ void getLocation() {
   m_wii_read(blobs); // update blobs
   //unsigned int starLocations[] = {0,0,0,0,0,0,0,0};
   int starLocSize = 8;
-  bool missedPoint = false;
-
   missedPointPrev = missedPoint;
   missedPoint = false;
-  unsigned int starLocations[] = {blobs[0], blobs[3], blobs[6], blobs[9], blobs[1], blobs[4], blobs[7], blobs[10]};
+
+  int starLocations[] = {blobs[0], blobs[3], blobs[6], blobs[9], blobs[1], blobs[4], blobs[7], blobs[10]};
   int n;
   for(n=0;n<=3;n++) {
     if(starLocations[n] == 1023 || starLocations[n+4] == 1023) {
-      if(missedPoint) {
-        missedPoint = missedPointPrev;
+     // if(missedPoint) {
+        missedPoint = missedPointPrev; // TODO: fix later
         int z = 0;
         for(z =0; z<starLocSize; z++) {
           starLocations[z] = starLocPrev[z];
         }
         break;
-      } else if(!missedPoint) {
-        missedPoint = true;
-      } if(n<3 && (starLocations[3] == 1023 || starLocations[7] == 1023)) {
-        starLocations[n] = starLocations[3];
-        starLocations[n+4] = starLocations[7];
-      }
+      //} //else if(!missedPoint) {
+        //missedPoint = true;
+      //} 
+      // if(n<3 && (starLocations[3] == 1023 || starLocations[7] == 1023)) {
+      //   starLocations[n] = starLocations[3];
+      //   starLocations[n+4] = starLocations[7];
+      // }
     }
   }
 
@@ -224,16 +225,33 @@ void getLocation() {
       a=Pmax1;
     }
     // Transform into final position and orientation
-    double theta_frame = atan2(starLocations[a+4]-starLocations[c+4],starLocations[a]-starLocations[c]); // -pi/2
-    double positionX_frame = (starLocations[a]+starLocations[c])/2.-512;
-    double positionY_frame = (starLocations[a+4]+starLocations[c+4])/2.-384;
+    double theta_frame = -3.14159/2+atan2(((double)starLocations[a+4]-(double)starLocations[c+4]), ((double)starLocations[a]-(double)starLocations[c])); // -pi/2
+    //3.14159/2+
+    double positionX_frame = (starLocations[a]+starLocations[c])/2.-512.;
+    double positionY_frame = (starLocations[a+4]+starLocations[c+4])/2.-384.;
 
-    positionX = positionY_frame*cos(theta_frame)-positionX_frame*sin(theta_frame);
-    positionY = -positionX_frame*cos(theta_frame)-positionY_frame*sin(theta_frame);
-    theta = -theta+3.14159/2;
-    positionX = positionX_frame;
-    positionY = positionY_frame;
+  //   m_usb_tx_char('t');
+  //   m_usb_tx_char('a');
+  // m_usb_tx_int((int) (theta_frame*100));
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('x');
+  // m_usb_tx_int(positionX_frame);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('y');
+  // m_usb_tx_int(positionY_frame);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+
+    positionX = -positionX_frame*cos(theta_frame)-positionY_frame*sin(theta_frame);
+    positionY = positionX_frame*sin(theta_frame)-positionY_frame*cos(theta_frame);
     theta = theta_frame;
+    //positionX = positionX_frame;
+    //positionY = positionY_frame;
+    //theta = theta_frame;
   }
 }
 
@@ -313,8 +331,11 @@ int main(void) {
   init();
   //motorTest();
   while(1) {
-    getLocation();
-    printLocation();
+    m_green(TOGGLE);
+    // getLocation();
+    // printLocation();
+    driveLeftMotor(true,0.5*0xFFFF);
+    driveRightMotor(true,0.5*0xFFFF);
     m_wait(2000);
     //motorTest();
     //if(packet_received) {
