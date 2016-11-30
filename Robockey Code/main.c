@@ -13,22 +13,33 @@
 #include "m_rf.h"
 #include "m_usb.h"
 #include "m_wii.h"
-// output pins to motor driver
+// output pins to motor driver:
 #define SYSTEM_FREQ 16000000 // system clock frequency, Hz
 #define RIGHT_ENABLE 0
 #define RIGHT_DIRECTION 1
 #define LEFT_ENABLE 2
 #define LEFT_DIRECTION 3
-//RF Parameters
+// input pins for IR sensors TODO: Assign
+#define LEFT_SENSOR 1
+#define RIGHT_SENSOR 1
+#define FRONT_SENSOR 1
+#define PUCK_SENSOR 1
+
+//RF Parameters:
 #define CHANNEL 1
 #define ADDRESS 40 // address for robot 1
 #define PACKET_LENGTH 10 // bytes
 char buffer[PACKET_LENGTH];
 bool packet_received = false;
-// Important locations: currently arbitrary
-#define X_GOAL_B -310
-#define Y_GOAL_B_HIGH 150
-#define Y_GOAL_B_LOW 20
+// Important locations
+#define X_GOAL_B 247 // -310
+#define Y_GOAL_B_HIGH 187 // 83 // 150
+#define Y_GOAL_B_LOW -15 //-42 // 20
+
+#define X_GOAL_A -247
+#define Y_GOAL_A_HIGH 187
+#define Y_GOAL_A_LOW -15
+
 /*
  * Wii variables
  */
@@ -39,6 +50,69 @@ bool missedPointPrev = false; // whether we were missing a point previously
 double theta; // robot's current angle wrt line from center to goal B
 double positionX; // robot's current x position
 double positionY; // robot's current y position
+bool towardB; // direction of robot: 1 towards B, 0 towards A
+
+/* Method Declarations */
+void init(void);
+void init_usb(void);
+void driveLeftMotor(bool direction, unsigned int duty);
+void driveRightMotor(bool direction, unsigned int duty);
+void getLocation();
+void assignDirection();
+void printLocation();
+void goToGoal();
+
+int main_motor_test();
+int main_goal_test();
+int main_get_location();
+
+int main(void) {
+  // main_motor_test();
+  main_goal_test();
+  // main_get_location();
+}
+
+int main_motor_test() {
+  init();
+  while(1) {
+    driveLeftMotor(true,0xFFFF/2);
+    driveRightMotor(false,0xFFFF/2);
+    m_wait(2000);
+    driveLeftMotor(false,0xFFFF/2);
+    driveRightMotor(true,0xFFFF/2);
+    m_wait(2000);
+  }
+}
+
+int main_goal_test() {
+  init();
+  assignDirection();
+  while(1) {
+   if(!missedPoint) {
+      m_red(ON);
+    } else {
+      m_red(OFF);
+    }
+    getLocation();
+    goToGoal();
+  }
+}
+
+int main_get_location() {
+  init();
+  init_usb();
+  assignDirection();
+  while(1) {
+    if(!missedPoint) {
+      m_red(ON);
+    } else {
+      m_red(OFF);
+    }
+    getLocation();
+    printLocation();
+    m_wait(2000);
+  }
+}
 
 void init(void) {
   m_clockdivide(0); // set system clock speed
@@ -118,14 +192,12 @@ void init(void) {
 
    //m_red(OFF);
 
-   /*
-    * USB Initialization
-    */
-
-  //m_usb_init();
-  //while(!m_usb_isconnected()); // wait for a connection
-
   m_red(OFF);
+}
+
+void init_usb() {
+  m_usb_init();
+  while(!m_usb_isconnected()); // wait for a connection
 }
 
 /*
@@ -170,7 +242,7 @@ void getLocation() {
   for(n=0;n<=3;n++) {
     if(starLocations[n] == 1023 || starLocations[n+4] == 1023) {
      // if(missedPoint) {
-        missedPoint = missedPointPrev; // TODO: fix later
+        missedPoint = true; // TODO: fix later
         int z = 0;
         for(z =0; z<starLocSize; z++) {
           starLocations[z] = starLocPrev[z];
@@ -255,6 +327,16 @@ void getLocation() {
   }
 }
 
+void assignDirection() {
+  getLocation();
+  // assign direction
+  if(positionX < 0) {
+    towardB = true;
+  } else {
+    towardB = false;
+  }
+}
+
 void printLocation() {
   m_usb_tx_char('a');
   m_usb_tx_int((int) (theta*100));
@@ -304,43 +386,25 @@ void printLocation() {
 }
 
 void goToGoal() {
-  double theta_goal_high = atan2(Y_GOAL_B_HIGH-positionY,X_GOAL_B-positionX); // angle to high side of the goal
-  double theta_goal_low = atan2(Y_GOAL_B_LOW-positionY,X_GOAL_B-positionX); // angle to low side of the goal
-  if(theta-theta_goal_high>0) { // rotate right
-    driveLeftMotor(true,0xFFFF/2);
-    driveRightMotor(false,0xFFFF/2);
-  } else if(theta-theta_goal_low<0) { // rotate left
-    driveLeftMotor(false,0xFFFF/2);
-    driveRightMotor(true,0xFFFF/2);
-  } else {
-    driveLeftMotor(true,0xFFFF/2);
-    driveRightMotor(true,0xFFFF/2);
+  double theta_goal_high = -atan2(Y_GOAL_B_HIGH-positionY,X_GOAL_B-positionX); // angle to high side of the goal
+  double theta_goal_low = -atan2(Y_GOAL_B_LOW-positionY,X_GOAL_B-positionX); // angle to low side of the goal
+  if(theta > 3.14159) {
+    theta -= 2*3.14159;
+  } else if (theta < -3.14159) {
+    theta+= 2*3.14159;
   }
-}
-
-void motorTest(void) {
-  driveLeftMotor(true,0xFFFF/2);
-  driveRightMotor(false,0xFFFF/2);
-  m_wait(2000);
-  driveLeftMotor(false,0xFFFF/2);
-  driveRightMotor(true,0xFFFF/2);
-  m_wait(2000);
-}
-
-int main(void) {
-  init();
-  //motorTest();
-  while(1) {
-    m_green(TOGGLE);
-    // getLocation();
-    // printLocation();
-    driveLeftMotor(true,0.5*0xFFFF);
-    driveRightMotor(true,0.5*0xFFFF);
-    m_wait(2000);
-    //motorTest();
-    //if(packet_received) {
-      //goToGoal();
-    //}
+  if(theta-theta_goal_high<0) { // rotate right
+    m_green(OFF);
+    driveRightMotor(true,0xFFFF/4);
+    driveLeftMotor(false,0xFFFF/4);
+  } else if(theta-theta_goal_low>0) { // rotate left
+    m_green(OFF);
+    driveRightMotor(false,0xFFFF/4);
+    driveLeftMotor(true,0xFFFF/4);
+  } else {
+    m_green(ON);
+    driveLeftMotor(true,0xFFFF/4);
+    driveRightMotor(true,0xFFFF/4);
   }
 }
 
