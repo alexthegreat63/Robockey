@@ -67,6 +67,9 @@ void getLocation();
 void assignDirection();
 void printLocation();
 void goToGoal();
+void blueOn();
+void redOn();
+void processPacket();
 
 int main_motor_test();
 int main_goal_test();
@@ -85,52 +88,7 @@ int main(void) {
 int main_comm_test() {
 	init();
 	while(1) {
-		if(packet_received == true) {
-			packet_received = false;
-			m_rf_read(buffer, PACKET_LENGTH);
-			
-			if(buffer(0) == 0xA0) { // Comm Test
-				stop_flag = true;
-			}
-			else if(buffer(0) == 0xA1) { // Play
-				stop_flag = false;
-			}
-			else if(buffer(0) == 0xA2) { // Goal R
-				stop_flag = true;
-				if(towardB == 0) {
-					score_us = buffer(2);
-					score_them = buffer(3);
-				}
-				else {
-					score_us = buffer(3);
-					score_them = buffer(2);
-				}
-			}
-			else if(buffer(0) == 0xA3) { // Goal B
-				stop_flag = true;
-				if(towardB == 0) {
-					score_us = buffer(2);
-					score_them = buffer(3);
-				}
-				else {
-					score_us = buffer(3);
-					score_them = buffer(2);
-				}
-			}
-			else if(buffer(0) == 0xA4) { // Pause
-				stop_flag = true;
-			}
-			else if(buffer(0) == 0xA6) { // Halftime
-				stop_flag = true;
-				towardB = !towardB;
-			}
-			else if(buffer(0) == 0xA7) { // Game Over
-				stop_flag = true; 
-			}
-			else {
-				// Nothing
-			}
-		}
+    processPacket();
 	}
 }
 
@@ -442,12 +400,10 @@ void getLocation() {
 void assignDirection() {
   if(check(PINF,LED_IN)) {
     towardB = true;
-    clear(PORTF,RED);
-    set(PORTF,BLUE);
+    blueOn();
   } else {
     towardB = false;
-    clear(PORTF,BLUE);
-    set(PORTF,RED);
+    redOn();
   }
 
   // getLocation();
@@ -506,6 +462,65 @@ void printLocation() {
   // m_usb_tx_char('\r');
   // m_usb_tx_char('\n');
 
+}
+
+void redOn() {
+  clear(PORTF,BLUE);
+  set(PORTF,RED);
+}
+
+void blueOn() {
+  clear(PORTF,RED);
+  set(PORTF,BLUE);
+}
+
+void processPacket() {
+  if(packet_received == true) {
+    packet_received = false;
+    m_rf_read(buffer, PACKET_LENGTH);
+    
+    if(buffer[0] == 0xA0) { // Comm Test
+      stop_flag = true;
+      blueOn();
+    }
+    else if(buffer[0] == 0xA1) { // Play
+      stop_flag = false;
+    }
+    else if(buffer[0] == 0xA2) { // Goal R
+      stop_flag = true;
+      if(towardB == 0) {
+        score_us = buffer[2];
+        score_them = buffer[3];
+      }
+      else {
+        score_us = buffer[3];
+        score_them = buffer[2];
+      }
+    }
+    else if(buffer[0] == 0xA3) { // Goal B
+      stop_flag = true;
+      if(towardB == 0) {
+        score_us = buffer[2];
+        score_them = buffer[3];
+      }
+      else {
+        score_us = buffer[3];
+        score_them = buffer[2];
+      }
+    }
+    else if(buffer[0] == 0xA4) { // Pause
+      stop_flag = true;
+    }
+    else if(buffer[0] == 0xA6) { // Halftime
+      stop_flag = true;
+    }
+    else if(buffer[0] == 0xA7) { // Game Over
+      stop_flag = true; 
+    }
+    else {
+      // Nothing
+    }
+  }
 }
 
 // Causes robot to go directly to desired goal
