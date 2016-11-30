@@ -25,8 +25,9 @@
 #define FRONT_SENSOR 5
 #define PUCK_SENSOR 6
 // output pins for blue/red LEDs. All Port F.
-#define BLUE 6
-#define RED 7
+#define BLUE 5
+#define RED 6
+#define LED_IN 7
 //RF Parameters:
 #define CHANNEL 1
 #define ADDRESS 40 // address for robot 1
@@ -80,6 +81,7 @@ int main(void) {
 int main_puck_sense_test() {
   init();
   while(1) {
+    assignDirection();
     if(check(PIND,LEFT_SENSOR)) {
       m_red(ON);
     } else {
@@ -104,8 +106,8 @@ int main_motor_test() {
 // Causes robot to go to goal on opposite side of arena from starting position
 int main_goal_test() {
   init();
-  assignDirection();
   while(1) {
+    assignDirection();
    if(!missedPoint) {
       m_red(ON);
     } else {
@@ -143,6 +145,12 @@ void init(void) {
    */
 
   m_bus_init();
+
+  /**
+   * Disable JTag to use pins F4-F7 as GPIO
+   */
+
+   m_disableJTAG();
 
   /*
    * Motor Timer Setups
@@ -203,9 +211,10 @@ void init(void) {
   clear(PORTF,RED);
 
   /*
-   * Input Pins (Puck IR sensors)
+   * Input Pins
    */
 
+   // Puck IR sensors
    clear(DDRD,LEFT_SENSOR); // initialize for input
    clear(PORTD,LEFT_SENSOR); // disable pullup resistor
 
@@ -217,6 +226,10 @@ void init(void) {
 
    clear(DDRD,PUCK_SENSOR); // initialize for input
    clear(PORTD,PUCK_SENSOR); // disable pullup resistor
+
+   // LED Switch input
+   clear(DDRF,LED_IN); // initialize for input
+   set(PORTF,LED_IN); // enable pullup resistor
 
   /*
    * Initialize Wii Module
@@ -371,13 +384,23 @@ void getLocation() {
 
 // Assigns robot direction to go toward opposite side from starting position
 void assignDirection() {
-  getLocation();
-  // assign direction
-  if(positionX < 0) {
+  if(check(PINF,LED_IN)) {
     towardB = true;
+    clear(PORTF,RED);
+    set(PORTF,BLUE);
   } else {
     towardB = false;
+    clear(PORTF,BLUE);
+    set(PORTF,RED);
   }
+
+  // getLocation();
+  // assign direction
+  // if(positionX < 0) {
+  //   towardB = true;
+  // } else {
+  //   towardB = false;
+  // }
 }
 
 // Prints angle*100, x position, and y position in arena
@@ -482,7 +505,7 @@ ISR(TIMER1_COMPC_vect) {
 }
 
 // Activated when RF packet received
-// ISR(INT2_vect) {
-//   packet_received = true;
-//   m_rf_read(buffer, PACKET_LENGTH);
-// }
+ISR(INT2_vect) {
+  packet_received = true;
+  m_rf_read(buffer, PACKET_LENGTH);
+}
