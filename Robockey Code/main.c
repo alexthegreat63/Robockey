@@ -33,6 +33,9 @@
 #define PACKET_LENGTH 10 // bytes
 char buffer[PACKET_LENGTH];
 bool packet_received = false;
+bool stop_flag = true;
+unsigned char score_us = 0;
+unsigned char score_them = 0;
 // Important locations
 #define X_GOAL_B 247 // -310
 #define Y_GOAL_B_HIGH 187 // 83 // 150
@@ -75,6 +78,59 @@ int main(void) {
   // main_get_location();
   main_puck_sense_test();
   while(1);
+}
+
+// Reads new packet and sets variables accordingly.
+int main_comm_test() {
+	init();
+	while(1) {
+		if(packet_received == true) {
+			packet_received = false;
+			m_rf_read(buffer, PACKET_LENGTH);
+			
+			if(buffer(0) == 0xA0) { // Comm Test
+				stop_flag = true;
+			}
+			else if(buffer(0) == 0xA1) { // Play
+				stop_flag = false;
+			}
+			else if(buffer(0) == 0xA2) { // Goal R
+				stop_flag = true;
+				if(towardB == 0) {
+					score_us = buffer(2);
+					score_them = buffer(3);
+				}
+				else {
+					score_us = buffer(3);
+					score_them = buffer(2);
+				}
+			}
+			else if(buffer(0) == 0xA3) { // Goal B
+				stop_flag = true;
+				if(towardB == 0) {
+					score_us = buffer(2);
+					score_them = buffer(3);
+				}
+				else {
+					score_us = buffer(3);
+					score_them = buffer(2);
+				}
+			}
+			else if(buffer(0) == 0xA4) { // Pause
+				stop_flag = true;
+			}
+			else if(buffer(0) == 0xA6) { // Halftime
+				stop_flag = true;
+				towardB = !towardB;
+			}
+			else if(buffer(0) == 0xA7) { // Game Over
+				stop_flag = true; 
+			}
+			else {
+				// Nothing
+			}
+		}
+	}
 }
 
 int main_puck_sense_test() {
@@ -482,7 +538,6 @@ ISR(TIMER1_COMPC_vect) {
 }
 
 // Activated when RF packet received
-// ISR(INT2_vect) {
-//   packet_received = true;
-//   m_rf_read(buffer, PACKET_LENGTH);
-// }
+ISR(INT2_vect) {
+	packet_received = true;
+}
