@@ -13,18 +13,20 @@
 #include "m_rf.h"
 #include "m_usb.h"
 #include "m_wii.h"
-// output pins to motor driver:
+// output pins to motor driver. All Port B.
 #define SYSTEM_FREQ 16000000 // system clock frequency, Hz
 #define RIGHT_ENABLE 0
 #define RIGHT_DIRECTION 1
 #define LEFT_ENABLE 2
 #define LEFT_DIRECTION 3
-// input pins for IR sensors TODO: Assign
-#define LEFT_SENSOR 1
-#define RIGHT_SENSOR 1
-#define FRONT_SENSOR 1
-#define PUCK_SENSOR 1
-
+// input pins for IR sensors. All Port D.
+#define LEFT_SENSOR 3
+#define RIGHT_SENSOR 4
+#define FRONT_SENSOR 5
+#define PUCK_SENSOR 6
+// output pins for blue/red LEDs. All Port F.
+#define BLUE 6
+#define RED 7
 //RF Parameters:
 #define CHANNEL 1
 #define ADDRESS 40 // address for robot 1
@@ -65,13 +67,28 @@ void goToGoal();
 int main_motor_test();
 int main_goal_test();
 int main_get_location();
+int main_puck_sense_test();
 
 int main(void) {
   // main_motor_test();
-  main_goal_test();
+  // main_goal_test();  
   // main_get_location();
+  main_puck_sense_test();
+  while(1);
 }
 
+int main_puck_sense_test() {
+  init();
+  while(1) {
+    if(check(PIND,LEFT_SENSOR)) {
+      m_red(ON);
+    } else {
+      m_red(OFF);
+    }
+  }
+}
+
+// drives left motor forward then backward, and right motor backward then forward
 int main_motor_test() {
   init();
   while(1) {
@@ -84,6 +101,7 @@ int main_motor_test() {
   }
 }
 
+// Causes robot to go to goal on opposite side of arena from starting position
 int main_goal_test() {
   init();
   assignDirection();
@@ -98,6 +116,7 @@ int main_goal_test() {
   }
 }
 
+// uses USB to print location
 int main_get_location() {
   init();
   init_usb();
@@ -114,6 +133,7 @@ int main_get_location() {
   }
 }
 
+// Initialization
 void init(void) {
   m_clockdivide(0); // set system clock speed
   m_red(ON);
@@ -172,11 +192,31 @@ void init(void) {
   set(DDRB,LEFT_DIRECTION);
   set(DDRB,RIGHT_ENABLE);
   set(DDRB,RIGHT_DIRECTION);
+  set(DDRF,BLUE);
+  set(DDRF,RED);
   // set outputs to 0 to start:
   clear(PORTB,LEFT_ENABLE);
   clear(PORTB,LEFT_DIRECTION);
   clear(PORTB,RIGHT_ENABLE);
   clear(PORTB,RIGHT_DIRECTION);
+  clear(PORTF,BLUE);
+  clear(PORTF,RED);
+
+  /*
+   * Input Pins (Puck IR sensors)
+   */
+
+   clear(DDRD,LEFT_SENSOR); // initialize for input
+   clear(PORTD,LEFT_SENSOR); // disable pullup resistor
+
+   clear(DDRD,RIGHT_SENSOR); // initialize for input
+   clear(PORTD,RIGHT_SENSOR); // disable pullup resistor
+
+   clear(DDRD,FRONT_SENSOR); // initialize for input
+   clear(PORTD,FRONT_SENSOR); // disable pullup resistor
+
+   clear(DDRD,PUCK_SENSOR); // initialize for input
+   clear(PORTD,PUCK_SENSOR); // disable pullup resistor
 
   /*
    * Initialize Wii Module
@@ -195,6 +235,7 @@ void init(void) {
   m_red(OFF);
 }
 
+// Initializes USB connection
 void init_usb() {
   m_usb_init();
   while(!m_usb_isconnected()); // wait for a connection
@@ -230,6 +271,7 @@ void driveRightMotor(bool direction, unsigned int duty) {
   OCR1C = duty;
 }
 
+// updates robot location
 void getLocation() {
   m_wii_read(blobs); // update blobs
   //unsigned int starLocations[] = {0,0,0,0,0,0,0,0};
@@ -284,7 +326,7 @@ void getLocation() {
         } else if(d>D2max) {
           P2max1 = i;
           P2max2 = j;
-          D2max = d;  
+          D2max = d; 
         }
       }
     }
@@ -327,6 +369,7 @@ void getLocation() {
   }
 }
 
+// Assigns robot direction to go toward opposite side from starting position
 void assignDirection() {
   getLocation();
   // assign direction
@@ -337,6 +380,7 @@ void assignDirection() {
   }
 }
 
+// Prints angle*100, x position, and y position in arena
 void printLocation() {
   m_usb_tx_char('a');
   m_usb_tx_int((int) (theta*100));
@@ -385,9 +429,22 @@ void printLocation() {
 
 }
 
+// Causes robot to go directly to desired goal
 void goToGoal() {
-  double theta_goal_high = -atan2(Y_GOAL_B_HIGH-positionY,X_GOAL_B-positionX); // angle to high side of the goal
-  double theta_goal_low = -atan2(Y_GOAL_B_LOW-positionY,X_GOAL_B-positionX); // angle to low side of the goal
+  int y_high;
+  int y_low;
+  int x;
+  if(towardB) {
+    y_high = Y_GOAL_B_HIGH;
+    y_low = Y_GOAL_B_LOW;
+    x = X_GOAL_B;
+  } else {
+    y_high = Y_GOAL_A_HIGH;
+    y_low = Y_GOAL_A_LOW;
+    x = X_GOAL_A;
+  }
+  double theta_goal_high = -atan2(y_high-positionY,x-positionX); // angle to high side of the goal
+  double theta_goal_low = -atan2(y_low-positionY,x-positionX); // angle to low side of the goal
   if(theta > 3.14159) {
     theta -= 2*3.14159;
   } else if (theta < -3.14159) {
