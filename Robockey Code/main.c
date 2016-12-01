@@ -1,5 +1,5 @@
 /* Name: main.c
- * Author: Alex Kearns, Nick Trivelis, Lincoln Talbott, Anirudh
+ * Authors: Alex Kearns, Nick Trivelis, Lincoln Talbott, Anirudh
  * kearnsa@seas.upenn.edu
  *
  * MEAM 510
@@ -551,18 +551,19 @@ void processPacket() {
   }
 }
 
+// Seek puck and then move with puck
 void puckFind() {
-	if(!check(PIND,LEFT_SENSOR)) {
-		driveLeftMotor(0, 0xFF/4);
-		driveRightMotor(1, 0xFF/4);
-	}
-	else if(!check(PIND,RIGHT_SENSOR)) {
-		driveLeftMotor(1, 0xFF/4);
-		driveRightMotor(0, 0xFF/4);
-	}
-	else if(!check(PIND, FRONT_SENSOR) && check(PIND, PUCK_SENSOR)) {
-		driveLeftMotor(1, 0xFF/4);
-		driveRightMotor(1, 0xFF/4);
+	if(!check(PIND, PUCK_SENSOR)) { // if puck is in our posession
+    goToGoal();
+  } else if(!check(PIND, FRONT_SENSOR)) { // if puck is directly ahead
+    driveLeftMotor(true, 0xFFFF/4);
+    driveRightMotor(true, 0xFFFF/4);
+  } else if(!check(PIND,LEFT_SENSOR)) { // if puck is to left
+		driveLeftMotor(false, 0xFFFF/4);
+		driveRightMotor(true, 0xFFFF/4);
+	} else if(!check(PIND,RIGHT_SENSOR)) { // if puck is to right
+		driveLeftMotor(true, 0xFFFF/4);
+		driveRightMotor(false, 0xFFFF/4);
 	}
 	
 	// NOTE: May have to change the order of the if statements. Also, may call goToGoal() from here if PUCK_SENSOR is high.
