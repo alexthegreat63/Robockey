@@ -13,21 +13,25 @@
 #include "m_rf.h"
 #include "m_usb.h"
 #include "m_wii.h"
+
 // output pins to motor driver. All Port B.
 #define SYSTEM_FREQ 16000000 // system clock frequency, Hz
 #define RIGHT_ENABLE 0
 #define RIGHT_DIRECTION 1
 #define LEFT_ENABLE 2
 #define LEFT_DIRECTION 3
+
 // input pins for IR sensors. All Port D.
 #define LEFT_SENSOR 3
 #define RIGHT_SENSOR 4
 #define FRONT_SENSOR 5
 #define PUCK_SENSOR 6
+
 // output pins for blue/red LEDs. All Port F.
 #define BLUE 5
 #define RED 6
 #define LED_IN 7
+
 //RF Parameters:
 #define CHANNEL 1
 #define ADDRESS 40 // address for robot 1
@@ -37,18 +41,16 @@ bool packet_received = false;
 bool stop_flag = true;
 unsigned char score_us = 0;
 unsigned char score_them = 0;
+
 // Important locations
 #define X_GOAL_B 247 // -310
 #define Y_GOAL_B_HIGH 187 // 83 // 150
 #define Y_GOAL_B_LOW -15 //-42 // 20
-
 #define X_GOAL_A -247
 #define Y_GOAL_A_HIGH 187
 #define Y_GOAL_A_LOW -15
 
-/*
- * Wii variables
- */
+/* Wii variables */
 unsigned int blobs[] = {0,0,0,0,0,0,0,0,0,0,0,0}; // 12 element buffer for Wii data
 unsigned int starLocPrev[] = {0,0,0,0,0,0,0,0}; // location of previous stars
 bool missedPoint = false;
@@ -56,7 +58,10 @@ bool missedPointPrev = false; // whether we were missing a point previously
 double theta; // robot's current angle wrt line from center to goal B
 double positionX; // robot's current x position
 double positionY; // robot's current y position
-bool towardB; // direction of robot: 1 towards B, 0 towards A
+
+// NOTE - These variables must be retreived from switch values at init().
+bool towardB = false; // direction of robot: 1 towards B, 0 towards A
+bool isBlue = false; // Indicates team color of robot.
 
 /* Method Declarations */
 void init(void);
@@ -69,7 +74,9 @@ void printLocation();
 void goToGoal();
 void blueOn();
 void redOn();
+void ledOff();
 void processPacket();
+void puckFind();
 
 int main_motor_test();
 int main_goal_test();
@@ -474,6 +481,11 @@ void blueOn() {
   set(PORTF,BLUE);
 }
 
+void ledOff() {
+	clear(PORTF,BLUE);
+	clear(PORTF,RED);
+}
+
 void processPacket() {
   if(packet_received == true) {
     packet_received = false;
@@ -481,10 +493,25 @@ void processPacket() {
     
     if(buffer[0] == 0xA0) { // Comm Test
       stop_flag = true;
-      blueOn();
+	  if(isBlue) {
+		  blueOn();
+		  m_wait(1000);
+		  ledOff();
+	  }
+	  else {
+		  redOn();
+		  m_wait(1000);
+		  ledOff();
+	  }
     }
     else if(buffer[0] == 0xA1) { // Play
       stop_flag = false;
+	  if(isBlue) {
+		  blueOn();
+	  }
+	  else {
+		  redOn();
+	  }
     }
     else if(buffer[0] == 0xA2) { // Goal R
       stop_flag = true;
@@ -516,11 +543,29 @@ void processPacket() {
     }
     else if(buffer[0] == 0xA7) { // Game Over
       stop_flag = true; 
+	  ledOff();
     }
     else {
       // Nothing
     }
   }
+}
+
+void puckFind() {
+	if(!check(PIND,LEFT_SENSOR)) {
+		driveLeftMotor(0, 0xFF/4);
+		driveRightMotor(1, 0xFF/4);
+	}
+	else if(!check(PIND,RIGHT_SENSOR)) {
+		driveLeftMotor(1, 0xFF/4);
+		driveRightMotor(0, 0xFF/4);
+	}
+	else if(!check(PIND, FRONT_SENSOR) && check(PIND, PUCK_SENSOR)) {
+		driveLeftMotor(1, 0xFF/4);
+		driveRightMotor(1, 0xFF/4);
+	}
+	
+	// NOTE: May have to change the order of the if statements. Also, may call goToGoal() from here if PUCK_SENSOR is high.
 }
 
 // Causes robot to go directly to desired goal
