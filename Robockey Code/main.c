@@ -103,6 +103,7 @@ int main_puck_sense_test() {
   init();
   while(1) {
     assignDirection();
+    if(!check())
     if(check(PIND,LEFT_SENSOR)) {
       m_red(ON);
     } else {
@@ -551,9 +552,9 @@ void processPacket() {
   }
 }
 
-// Seek puck and then move with puck
+// Seek puck
 void puckFind() {
-	if(!check(PIND, PUCK_SENSOR)) { // if puck is in our posession
+  if(!check(PIND, PUCK_SENSOR)) { // if puck is in our posession
     goToGoal();
   } else if(!check(PIND, FRONT_SENSOR)) { // if puck is directly ahead
     driveLeftMotor(true, 0xFFFF/4);
@@ -565,7 +566,6 @@ void puckFind() {
 		driveLeftMotor(true, 0xFFFF/4);
 		driveRightMotor(false, 0xFFFF/4);
 	}
-	
 	// NOTE: May have to change the order of the if statements. Also, may call goToGoal() from here if PUCK_SENSOR is high.
 }
 
