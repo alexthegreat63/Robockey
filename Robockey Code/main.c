@@ -1,5 +1,5 @@
 /* Name: main.c
- * Author: Alex Kearns
+ * Author: Alex Kearns, Nick Trivelis, Lincoln Talbott, Anirudh
  * kearnsa@seas.upenn.edu
  *
  * MEAM 510
