@@ -14,41 +14,18 @@
 #include "m_usb.h"
 #include "m_wii.h"
 
-// output pins to motor driver. All Port B.
-#define SYSTEM_FREQ 16000000 // system clock frequency, Hz
-#define RIGHT_ENABLE 0
-#define RIGHT_DIRECTION 1
-#define LEFT_ENABLE 2
-#define LEFT_DIRECTION 3
+#include "r_usb.h"
+#include "r_led.h"
+#include "r_rf.h"
+#include "r_wii.h"
+#include "r_motor_drive.h"
+#include "r_parameters.h"
 
-// input pins for IR sensors. All Port D.
-#define LEFT_SENSOR 3
-#define RIGHT_SENSOR 4
-#define FRONT_SENSOR 5
-#define PUCK_SENSOR 6
-
-// output pins for blue/red LEDs. All Port F.
-#define BLUE 5
-#define RED 6
-#define LED_IN 7
-
-//RF Parameters:
-#define CHANNEL 1
-#define ADDRESS 40 // address for robot 1
-#define PACKET_LENGTH 10 // bytes
 char buffer[PACKET_LENGTH];
 bool packet_received = false;
 bool stop_flag = true;
 unsigned char score_us = 0;
 unsigned char score_them = 0;
-
-// Important locations
-#define X_GOAL_B 247 // -310
-#define Y_GOAL_B_HIGH 187 // 83 // 150
-#define Y_GOAL_B_LOW -15 //-42 // 20
-#define X_GOAL_A -247
-#define Y_GOAL_A_HIGH 187
-#define Y_GOAL_A_LOW -15
 
 /* Wii variables */
 unsigned int blobs[] = {0,0,0,0,0,0,0,0,0,0,0,0}; // 12 element buffer for Wii data
@@ -65,18 +42,7 @@ bool isBlue = false; // Indicates team color of robot.
 
 /* Method Declarations */
 void init(void);
-void init_usb(void);
-void driveLeftMotor(bool direction, unsigned int duty);
-void driveRightMotor(bool direction, unsigned int duty);
-void getLocation();
 void assignDirection();
-void printLocation();
-void goToGoal();
-void blueOn();
-void redOn();
-void ledOff();
-void processPacket();
-void puckFind();
 
 int main_motor_test();
 int main_goal_test();
@@ -103,7 +69,6 @@ int main_puck_sense_test() {
   init();
   while(1) {
     assignDirection();
-    if(!check())
     if(check(PIND,LEFT_SENSOR)) {
       m_red(ON);
     } else {
@@ -270,140 +235,6 @@ void init(void) {
   m_red(OFF);
 }
 
-// Initializes USB connection
-void init_usb() {
-  m_usb_init();
-  while(!m_usb_isconnected()); // wait for a connection
-}
-
-/*
- * Drive the left motor forward
- * Inputs: 
- *  direction (1 forward, 0 backward)
- *  duty (0xFFFF = 100% duty, 0 = 0% duty)
- */
-void driveLeftMotor(bool direction, unsigned int duty) {
-  if(direction) {
-    set(PORTB,LEFT_DIRECTION);
-  } else {
-    clear(PORTB,LEFT_DIRECTION);
-  }
-  OCR1B = duty;
-}
-
-/*
- * Drive the right motor forward
- * Inputs: 
- *  direction (1 forward, 0 backward)
- *  duty (0xFFFF = 100% duty, 0 = 0% duty)
- */
-void driveRightMotor(bool direction, unsigned int duty) {
-  if(direction) {
-    set(PORTB,RIGHT_DIRECTION);
-  } else {
-    clear(PORTB,RIGHT_DIRECTION);
-  }
-  OCR1C = duty;
-}
-
-// updates robot location
-void getLocation() {
-  m_wii_read(blobs); // update blobs
-  //unsigned int starLocations[] = {0,0,0,0,0,0,0,0};
-  int starLocSize = 8;
-  missedPointPrev = missedPoint;
-  missedPoint = false;
-
-  int starLocations[] = {blobs[0], blobs[3], blobs[6], blobs[9], blobs[1], blobs[4], blobs[7], blobs[10]};
-  int n;
-  for(n=0;n<=3;n++) {
-    if(starLocations[n] == 1023 || starLocations[n+4] == 1023) {
-     // if(missedPoint) {
-        missedPoint = true; // TODO: fix later
-        int z = 0;
-        for(z =0; z<starLocSize; z++) {
-          starLocations[z] = starLocPrev[z];
-        }
-        break;
-      //} //else if(!missedPoint) {
-        //missedPoint = true;
-      //} 
-      // if(n<3 && (starLocations[3] == 1023 || starLocations[7] == 1023)) {
-      //   starLocations[n] = starLocations[3];
-      //   starLocations[n+4] = starLocations[7];
-      // }
-    }
-  }
-
-  int Pmax1 = 0;
-  int Pmax2 = 1;
-  int Dmax = 0;
-  int P2max1 = 0;
-  int P2max2 = 2;
-  int D2max = 0;
-
-  /*
-   * Case: no missing point
-   */
-  if(!missedPoint) {
-    int i;
-    for(i=0;i<=2;i++) {
-      int j;
-      for(j=i+1;j<=3;j++) {
-        int d = pow(starLocations[i]-starLocations[j],2) + pow(starLocations[i+4]-starLocations[j+4],2);
-        if(d>Dmax) {
-          P2max1 = Pmax1;
-          P2max2 = Pmax2;
-          D2max = Dmax;
-          Pmax1 = i;
-          Pmax2 = j;
-          Dmax = d;
-        } else if(d>D2max) {
-          P2max1 = i;
-          P2max2 = j;
-          D2max = d; 
-        }
-      }
-    }
-    int c; int a;
-    if(Pmax1==P2max1 || Pmax1== P2max2) {
-      c=Pmax1;
-      a=Pmax2;
-    } else {
-      c=Pmax2;
-      a=Pmax1;
-    }
-    // Transform into final position and orientation
-    double theta_frame = -3.14159/2+atan2(((double)starLocations[a+4]-(double)starLocations[c+4]), ((double)starLocations[a]-(double)starLocations[c])); // -pi/2
-    //3.14159/2+
-    double positionX_frame = (starLocations[a]+starLocations[c])/2.-512.;
-    double positionY_frame = (starLocations[a+4]+starLocations[c+4])/2.-384.;
-
-  //   m_usb_tx_char('t');
-  //   m_usb_tx_char('a');
-  // m_usb_tx_int((int) (theta_frame*100));
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  // m_usb_tx_char('x');
-  // m_usb_tx_int(positionX_frame);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  // m_usb_tx_char('y');
-  // m_usb_tx_int(positionY_frame);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-
-    positionX = -positionX_frame*cos(theta_frame)-positionY_frame*sin(theta_frame);
-    positionY = positionX_frame*sin(theta_frame)-positionY_frame*cos(theta_frame);
-    theta = theta_frame;
-    //positionX = positionX_frame;
-    //positionY = positionY_frame;
-    //theta = theta_frame;
-  }
-}
-
 // Assigns robot direction to go toward opposite side from starting position
 void assignDirection() {
   if(check(PINF,LED_IN)) {
@@ -421,188 +252,6 @@ void assignDirection() {
   // } else {
   //   towardB = false;
   // }
-}
-
-// Prints angle*100, x position, and y position in arena
-void printLocation() {
-  m_usb_tx_char('a');
-  m_usb_tx_int((int) (theta*100));
-  m_usb_tx_char('\r');
-  m_usb_tx_char('\n');
-  m_usb_tx_char('x');
-  m_usb_tx_int(positionX);
-  m_usb_tx_char('\r');
-  m_usb_tx_char('\n');
-  m_usb_tx_char('y');
-  m_usb_tx_int(positionY);
-  m_usb_tx_char('\r');
-  m_usb_tx_char('\n');
-  m_usb_tx_char('\r');
-  m_usb_tx_char('\n');
-
-  //   m_usb_tx_char('a');
-  // m_usb_tx_int(blobs[0]);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  // m_usb_tx_char('x');
-  // m_usb_tx_int(blobs[1]);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  // m_usb_tx_char('y');
-  // m_usb_tx_int(blobs[3]);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  //   m_usb_tx_int(blobs[4]);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  //   m_usb_tx_int(blobs[6]);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  //   m_usb_tx_int(blobs[7]);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  //   m_usb_tx_int(blobs[9]);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  //   m_usb_tx_int(blobs[10]);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-
-}
-
-void redOn() {
-  clear(PORTF,BLUE);
-  set(PORTF,RED);
-}
-
-void blueOn() {
-  clear(PORTF,RED);
-  set(PORTF,BLUE);
-}
-
-void ledOff() {
-	clear(PORTF,BLUE);
-	clear(PORTF,RED);
-}
-
-void processPacket() {
-  if(packet_received == true) {
-    packet_received = false;
-    m_rf_read(buffer, PACKET_LENGTH);
-    
-    if(buffer[0] == 0xA0) { // Comm Test
-      stop_flag = true;
-	  if(isBlue) {
-		  blueOn();
-		  m_wait(1000);
-		  ledOff();
-	  }
-	  else {
-		  redOn();
-		  m_wait(1000);
-		  ledOff();
-	  }
-    }
-    else if(buffer[0] == 0xA1) { // Play
-      stop_flag = false;
-	  if(isBlue) {
-		  blueOn();
-	  }
-	  else {
-		  redOn();
-	  }
-    }
-    else if(buffer[0] == 0xA2) { // Goal R
-      stop_flag = true;
-      if(towardB == 0) {
-        score_us = buffer[2];
-        score_them = buffer[3];
-      }
-      else {
-        score_us = buffer[3];
-        score_them = buffer[2];
-      }
-    }
-    else if(buffer[0] == 0xA3) { // Goal B
-      stop_flag = true;
-      if(towardB == 0) {
-        score_us = buffer[2];
-        score_them = buffer[3];
-      }
-      else {
-        score_us = buffer[3];
-        score_them = buffer[2];
-      }
-    }
-    else if(buffer[0] == 0xA4) { // Pause
-      stop_flag = true;
-    }
-    else if(buffer[0] == 0xA6) { // Halftime
-      stop_flag = true;
-    }
-    else if(buffer[0] == 0xA7) { // Game Over
-      stop_flag = true; 
-	  ledOff();
-    }
-    else {
-      // Nothing
-    }
-  }
-}
-
-// Seek puck
-void puckFind() {
-  if(!check(PIND, PUCK_SENSOR)) { // if puck is in our posession
-    goToGoal();
-  } else if(!check(PIND, FRONT_SENSOR)) { // if puck is directly ahead
-    driveLeftMotor(true, 0xFFFF/4);
-    driveRightMotor(true, 0xFFFF/4);
-  } else if(!check(PIND,LEFT_SENSOR)) { // if puck is to left
-		driveLeftMotor(false, 0xFFFF/4);
-		driveRightMotor(true, 0xFFFF/4);
-	} else if(!check(PIND,RIGHT_SENSOR)) { // if puck is to right
-		driveLeftMotor(true, 0xFFFF/4);
-		driveRightMotor(false, 0xFFFF/4);
-	}
-	// NOTE: May have to change the order of the if statements. Also, may call goToGoal() from here if PUCK_SENSOR is high.
-}
-
-// Causes robot to go directly to desired goal
-void goToGoal() {
-  int y_high;
-  int y_low;
-  int x;
-  if(towardB) {
-    y_high = Y_GOAL_B_HIGH;
-    y_low = Y_GOAL_B_LOW;
-    x = X_GOAL_B;
-  } else {
-    y_high = Y_GOAL_A_HIGH;
-    y_low = Y_GOAL_A_LOW;
-    x = X_GOAL_A;
-  }
-  double theta_goal_high = -atan2(y_high-positionY,x-positionX); // angle to high side of the goal
-  double theta_goal_low = -atan2(y_low-positionY,x-positionX); // angle to low side of the goal
-  if(theta > 3.14159) {
-    theta -= 2*3.14159;
-  } else if (theta < -3.14159) {
-    theta+= 2*3.14159;
-  }
-  if(theta-theta_goal_high<0) { // rotate right
-    m_green(OFF);
-    driveRightMotor(true,0xFFFF/4);
-    driveLeftMotor(false,0xFFFF/4);
-  } else if(theta-theta_goal_low>0) { // rotate left
-    m_green(OFF);
-    driveRightMotor(false,0xFFFF/4);
-    driveLeftMotor(true,0xFFFF/4);
-  } else {
-    m_green(ON);
-    driveLeftMotor(true,0xFFFF/4);
-    driveRightMotor(true,0xFFFF/4);
-  }
 }
 
 // Overflow actions (enable both motors)

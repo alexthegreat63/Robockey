@@ -1,21 +1,20 @@
 // -----------------------------------------------------------------------------
-// Robockey Initialization Code
-// date: Nov 30 2016
+// M2 Wiimote Pixart Sensor interface
+// version: 1.1
+// date: Nov 11, 2011
+// author: J. Fiene
 // -----------------------------------------------------------------------------
 
-#ifndef init__
-#define init__
+#ifndef r_motor_drive__
+#define r_motor_drive__
 
 #include "m_general.h"
-#include "m_bus.h"
 
 // -----------------------------------------------------------------------------
-// Public functions:
+// Public functions:s
 // -----------------------------------------------------------------------------
 
-void init(void);
-
-
-void init_usb(void);
+void driveLeftMotor(bool direction, unsigned int duty);
+void driveRightMotor(bool direction, unsigned int duty);
 
 #endif
