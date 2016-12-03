@@ -21,6 +21,8 @@
 #define FRONT_SENSOR 5
 #define PUCK_SENSOR 6
 
+#define MOTOR_SPEED 0xFFFF/4
+
 // output pins for blue/red LEDs. All Port F.
 #define BLUE 5
 #define RED 6
@@ -38,6 +40,10 @@
 #define X_GOAL_A -247
 #define Y_GOAL_A_HIGH 187
 #define Y_GOAL_A_LOW -15
+
+// Distance behind other robot for train
+#define TRAIN_DISTANCE 15
+#define TRAIN_THETA_PAD 0.1 // + or - in x and y to get to location
 
 // -----------------------------------------------------------------------------
 // Public functions:s

@@ -9,11 +9,13 @@
 #define r_hockey_playing__
 
 #include "m_general.h"
+#include "r_parameters.h"
 
 // -----------------------------------------------------------------------------
 // Public functions:s
 // -----------------------------------------------------------------------------
 
 void goToGoal();
+void engageTrain();
 
 #endif

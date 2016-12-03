@@ -53,15 +53,47 @@ void goToGoal() {
   }
   if(theta-theta_goal_high<0) { // rotate right
     m_green(OFF);
-    driveRightMotor(true,0xFFFF/4);
-    driveLeftMotor(false,0xFFFF/4);
+    driveRightMotor(true,MOTOR_SPEED);
+    driveLeftMotor(false,MOTOR_SPEED);
   } else if(theta-theta_goal_low>0) { // rotate left
     m_green(OFF);
-    driveRightMotor(false,0xFFFF/4);
-    driveLeftMotor(true,0xFFFF/4);
+    driveRightMotor(false,MOTOR_SPEED);
+    driveLeftMotor(true,MOTOR_SPEED);
   } else {
     m_green(ON);
-    driveLeftMotor(true,0xFFFF/4);
-    driveRightMotor(true,0xFFFF/4);
+    driveLeftMotor(true,MOTOR_SPEED);
+    driveRightMotor(true,MOTOR_SPEED);
+  }
+}
+
+void engageTrain(int otherX, int otherY, double otherTheta) {
+  double otherUnitX = cos(otherTheta); // direction vector x component
+  double otherUnitY = sin(otherTheta); // direction vector y component
+  int aimForX = otherX - otherUnitX * TRAIN_DISTANCE; // x position to aim for
+  int aimForY = otherY - otherUnitY * TRAIN_DISTANCE; // y position to aim for
+
+  // Compute angle our robot should take, with padding on both sides
+  double thetaToOther = -atan2(aimForY-positionY,aimForX-positionX);
+  double thetaAimHigh = thetaToOther + TRAIN_THETA_PAD;
+  double thetaAimLow = thetaToOther - TRAIN_THETA_PAD;
+
+  if(theta > 3.14159) {
+    theta -= 2*3.14159;
+  } else if (theta < -3.14159) {
+    theta+= 2*3.14159;
+  }
+
+  if(theta-thetaAimHigh<0) { // rotate right
+    m_green(ON);
+    driveRightMotor(true,MOTOR_SPEED);
+    driveLeftMotor(false,MOTOR_SPEED);
+  } else if(theta-thetaAimLow>0) { // rotate left
+    m_green(OFF);
+    driveRightMotor(false,MOTOR_SPEED);
+    driveLeftMotor(true,MOTOR_SPEED);
+  } else {
+    m_green(ON);
+    driveLeftMotor(true,MOTOR_SPEED);
+    driveRightMotor(true,MOTOR_SPEED);
   }
 }

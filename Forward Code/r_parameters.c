@@ -25,6 +25,9 @@
 #define RED 6
 #define LED_IN 7
 
+// Motor Parameters:
+#define MOTOR_SPEED 0xFFFF/4
+
 //RF Parameters:
 #define CHANNEL 1
 #define ADDRESS 40 // address for robot 1
@@ -37,3 +40,7 @@
 #define X_GOAL_A -247
 #define Y_GOAL_A_HIGH 187
 #define Y_GOAL_A_LOW -15
+
+// Distance behind other robot for train
+#define TRAIN_DISTANCE 15
+#define TRAIN_THETA_PAD 0.1 // + or - in x and y to get to location
