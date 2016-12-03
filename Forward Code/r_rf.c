@@ -90,7 +90,7 @@ void processPacket() {
     }
     else if(buffer[0] == 0xA7) { // Game Over
       stop_flag = true; 
-    ledOff();
+      ledOff();
     }
     else {
       // Nothing

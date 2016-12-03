@@ -13,7 +13,7 @@
 # tag to the parents line (e.g. "PARENTS = "m_bus.o")
 # --------------------------------------------------------
 MAIN       = main.o m_usb.o m_bus.o m_wii.o m_rf.o
-CHILDREN   = r_usb.o r_rf.o r_led.o r_wii.o r_motor_drive.o r_puck_sense.o r_hockey_playing.o r_parameters.o
+CHILDREN   = r_init.o r_usb.o r_rf.o r_led.o r_wii.o r_motor_drive.o r_puck_sense.o r_hockey_playing.o r_parameters.o
 PARENTS    = 
 
 # --------------------------------------------------------

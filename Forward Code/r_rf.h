@@ -16,6 +16,7 @@
 // Public functions:s
 // -----------------------------------------------------------------------------
 
+void actOnPacket();
 void processPacket();
 
 #endif

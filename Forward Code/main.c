@@ -20,6 +20,8 @@
 #include "r_wii.h"
 #include "r_motor_drive.h"
 #include "r_parameters.h"
+#include "r_hockey_playing.h"
+#include "r_puck_sense.h"
 
 char buffer[PACKET_LENGTH];
 bool packet_received = false;
@@ -65,6 +67,21 @@ int main_comm_test() {
 	}
 }
 
+int main_find_puck() {
+  init();
+  while(1) {
+    processPacket();
+    assignDirection();
+    getLocation();
+    if(stop_flag) {
+      driveLeftMotor(true, 1);
+      driveRightMotor(true,1);
+    } else {
+      puckFind();
+    }
+  }
+}
+
 int main_puck_sense_test() {
   init();
   while(1) {
@@ -81,11 +98,11 @@ int main_puck_sense_test() {
 int main_motor_test() {
   init();
   while(1) {
-    driveLeftMotor(true,0xFFFF/2);
-    driveRightMotor(false,0xFFFF/2);
+    driveLeftMotor(true,MOTOR_SPEED);
+    driveRightMotor(false,MOTOR_SPEED);
     m_wait(2000);
-    driveLeftMotor(false,0xFFFF/2);
-    driveRightMotor(true,0xFFFF/2);
+    driveLeftMotor(false,MOTOR_SPEED);
+    driveRightMotor(true,MOTOR_SPEED);
     m_wait(2000);
   }
 }
@@ -120,119 +137,6 @@ int main_get_location() {
     printLocation();
     m_wait(2000);
   }
-}
-
-// Initialization
-void init(void) {
-  m_clockdivide(0); // set system clock speed
-  m_red(ON);
-
-  /*
-   * m_bus initialization: DO NOT use pins D0, D1, D2
-   */
-
-  m_bus_init();
-
-  /**
-   * Disable JTag to use pins F4-F7 as GPIO
-   */
-
-   m_disableJTAG();
-
-  /*
-   * Motor Timer Setups
-   */
-  // clock source: set to /1 of system clock
-  clear(TCCR1B,CS12);
-  clear(TCCR1B,CS11);
-  set(TCCR1B,CS10);
-
-  // timer mode 15: up to OCR1A, down to 0x000
-  set(TCCR1B,WGM13);
-  set(TCCR1B,WGM12);
-  set(TCCR1A,WGM11);
-  set(TCCR1A,WGM10);
-
-  OCR1A = 0xFFFF;
-
-  /* Channel A (overflow) setup */
-  set(DDRB,5); // enable output for channel A (overflow)
-  set(TIMSK1,TOIE1); // enable overflow interrupt
-
-  /* Channel B setup */ 
-  OCR1B = 1;
-  set(DDRB,6); // enable output for channel B (left motor)
-  set(TIMSK1,OCIE1B); // enable ch B interrupt
-
-  // Channel B compare output options (set flag)
-  set(TCCR1A,COM1B1);
-  set(TCCR1A,COM1B0);
-
-  /* Channel C setup */
-  OCR1C = 1;
-  set(DDRB,7); // enable output for channel C (right motor)
-  set(TIMSK1,OCIE1C); // enable ch C interrupt
-
-  // Channcel C compare output options
-  set(TCCR1A,COM1C1);
-  set(TCCR1A,COM1C0);
-
-  sei(); // enable global interrupts
-
- /*
-  * Output pins
-  */
-  // Enable pins as outputs:
-  set(DDRB,LEFT_ENABLE);
-  set(DDRB,LEFT_DIRECTION);
-  set(DDRB,RIGHT_ENABLE);
-  set(DDRB,RIGHT_DIRECTION);
-  set(DDRF,BLUE);
-  set(DDRF,RED);
-  // set outputs to 0 to start:
-  clear(PORTB,LEFT_ENABLE);
-  clear(PORTB,LEFT_DIRECTION);
-  clear(PORTB,RIGHT_ENABLE);
-  clear(PORTB,RIGHT_DIRECTION);
-  clear(PORTF,BLUE);
-  clear(PORTF,RED);
-
-  /*
-   * Input Pins
-   */
-
-   // Puck IR sensors
-   clear(DDRD,LEFT_SENSOR); // initialize for input
-   clear(PORTD,LEFT_SENSOR); // disable pullup resistor
-
-   clear(DDRD,RIGHT_SENSOR); // initialize for input
-   clear(PORTD,RIGHT_SENSOR); // disable pullup resistor
-
-   clear(DDRD,FRONT_SENSOR); // initialize for input
-   clear(PORTD,FRONT_SENSOR); // disable pullup resistor
-
-   clear(DDRD,PUCK_SENSOR); // initialize for input
-   clear(PORTD,PUCK_SENSOR); // disable pullup resistor
-
-   // LED Switch input
-   clear(DDRF,LED_IN); // initialize for input
-   set(PORTF,LED_IN); // enable pullup resistor
-
-  /*
-   * Initialize Wii Module
-   */
-
-  m_wii_open();
-
-  /*
-   * Initialize mRF module
-   */
-
-   //m_rf_open(CHANNEL, ADDRESS, PACKET_LENGTH);
-
-   //m_red(OFF);
-
-  m_red(OFF);
 }
 
 // Assigns robot direction to go toward opposite side from starting position

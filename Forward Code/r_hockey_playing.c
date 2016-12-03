@@ -82,7 +82,6 @@ void engageTrain(int otherX, int otherY, double otherTheta) {
   } else if (theta < -3.14159) {
     theta+= 2*3.14159;
   }
-
   if(theta-thetaAimHigh<0) { // rotate right
     m_green(ON);
     driveRightMotor(true,MOTOR_SPEED);

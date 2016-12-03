@@ -9,6 +9,8 @@
 
 #include "m_general.h"
 #include "r_parameters.h"
+#include "r_hockey_playing.h"
+#include "r_motor_drive.h"
 
 extern char buffer[PACKET_LENGTH];
 extern bool packet_received;
@@ -34,15 +36,15 @@ extern bool isBlue; // Indicates team color of robot.
 void puckFind() {
   if(!check(PIND, PUCK_SENSOR)) { // if puck is in our posession
     goToGoal();
-  } else if(!check(PIND, FRONT_SENSOR)) { // if puck is directly ahead
-    driveLeftMotor(true, 0xFFFF/4);
-    driveRightMotor(true, 0xFFFF/4);
+  } else if(!check(PIND, FRONT_LEFT_SENSOR) && !check(PIND, FRONT_CENTER_SENSOR) && !check(PIND, FRONT_RIGHT_SENSOR)) { // if puck is directly ahead
+    driveLeftMotor(true, MOTOR_SPEED);
+    driveRightMotor(true, MOTOR_SPEED);
   } else if(!check(PIND,LEFT_SENSOR)) { // if puck is to left
-    driveLeftMotor(false, 0xFFFF/4);
-    driveRightMotor(true, 0xFFFF/4);
+    driveLeftMotor(false, MOTOR_SPEED);
+    driveRightMotor(true, MOTOR_SPEED);
   } else if(!check(PIND,RIGHT_SENSOR)) { // if puck is to right
-    driveLeftMotor(true, 0xFFFF/4);
-    driveRightMotor(false, 0xFFFF/4);
+    driveLeftMotor(true, MOTOR_SPEED);
+    driveRightMotor(false, MOTOR_SPEED);
   }
   // NOTE: May have to change the order of the if statements. Also, may call goToGoal() from here if PUCK_SENSOR is high.
 }

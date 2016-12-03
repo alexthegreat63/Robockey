@@ -15,7 +15,4 @@
 
 void init(void);
 
-
-void init_usb(void);
-
 #endif

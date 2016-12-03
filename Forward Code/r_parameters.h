@@ -18,15 +18,18 @@
 // input pins for IR sensors. All Port D.
 #define LEFT_SENSOR 3
 #define RIGHT_SENSOR 4
-#define FRONT_SENSOR 5
+#define FRONT_LEFT_SENSOR 5
+#define FRONT_RIGHT_SENSOR 7
+#define FRONT_CENTER_SENSOR 1
 #define PUCK_SENSOR 6
-
-#define MOTOR_SPEED 0xFFFF/4
 
 // output pins for blue/red LEDs. All Port F.
 #define BLUE 5
 #define RED 6
 #define LED_IN 7
+
+// Motor Parameters:
+#define MOTOR_SPEED 0xFFFF/4
 
 //RF Parameters:
 #define CHANNEL 1
