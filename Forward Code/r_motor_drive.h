@@ -16,5 +16,7 @@
 
 void driveLeftMotor(bool direction, unsigned int duty);
 void driveRightMotor(bool direction, unsigned int duty);
+void stopLeft();
+void stopRight();
 
 #endif

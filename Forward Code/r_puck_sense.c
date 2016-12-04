@@ -34,9 +34,9 @@ extern bool isBlue; // Indicates team color of robot.
 
 // Seek puck
 void puckFind() {
-  if(!check(PIND, PUCK_SENSOR)) { // if puck is in our posession
+  if(!check(PIND, PUCK_LEFT_SENSOR) && !check(PIND, PUCK_RIGHT_SENSOR)) { // if puck is in our posession
     goToGoal();
-  } else if(!check(PIND, FRONT_LEFT_SENSOR) && !check(PIND, FRONT_CENTER_SENSOR) && !check(PIND, FRONT_RIGHT_SENSOR)) { // if puck is directly ahead
+  } else if(!check(PIND, FRONT_LEFT_SENSOR) && !check(PIND, FRONT_RIGHT_SENSOR)) { // if puck is directly ahead
     driveLeftMotor(true, MOTOR_SPEED);
     driveRightMotor(true, MOTOR_SPEED);
   } else if(!check(PIND,LEFT_SENSOR)) { // if puck is to left

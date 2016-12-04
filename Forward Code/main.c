@@ -42,6 +42,9 @@ double positionY; // robot's current y position
 bool towardB = false; // direction of robot: 1 towards B, 0 towards A
 bool isBlue = false; // Indicates team color of robot.
 
+bool left_stopped = false;
+bool right_stopped = false;
+
 /* Method Declarations */
 void init(void);
 void assignDirection();
@@ -50,12 +53,15 @@ int main_motor_test();
 int main_goal_test();
 int main_get_location();
 int main_puck_sense_test();
+int main_ir_test();
 
 int main(void) {
   // main_motor_test();
-  // main_goal_test();  
+  main_goal_test();  
   // main_get_location();
-  main_puck_sense_test();
+  // screen /dev/tty.usbmodem411
+  //main_puck_sense_test();
+  // main_ir_test();
   while(1);
 }
 
@@ -67,21 +73,35 @@ int main_comm_test() {
 	}
 }
 
+int main_ir_test() {
+  init();
+  while(1) {
+    if(!check(PIND,4)) {
+      m_red(ON);
+    } else {
+      m_red(OFF);
+    }
+  }
+}
+
+// Performs finding puck and going to goal routine
 int main_find_puck() {
   init();
   while(1) {
     processPacket();
     assignDirection();
     getLocation();
+    stop_flag = false;
     if(stop_flag) {
-      driveLeftMotor(true, 1);
-      driveRightMotor(true,1);
+      stopLeft();
+      stopRight();
     } else {
       puckFind();
     }
   }
 }
 
+// Checks to see if left sensors are working
 int main_puck_sense_test() {
   init();
   while(1) {
@@ -98,12 +118,16 @@ int main_puck_sense_test() {
 int main_motor_test() {
   init();
   while(1) {
+    blueOn();
+    left_stopped = false;
+    right_stopped = false;
     driveLeftMotor(true,MOTOR_SPEED);
-    driveRightMotor(false,MOTOR_SPEED);
-    m_wait(2000);
-    driveLeftMotor(false,MOTOR_SPEED);
     driveRightMotor(true,MOTOR_SPEED);
-    m_wait(2000);
+    //driveRightMotor(false,MOTOR_SPEED);
+    //m_wait(2000);
+    //driveLeftMotor(false,MOTOR_SPEED);
+    //driveRightMotor(true,MOTOR_SPEED);
+    //m_wait(2000);
   }
 }
 
@@ -143,25 +167,21 @@ int main_get_location() {
 void assignDirection() {
   if(check(PINF,LED_IN)) {
     towardB = true;
-    blueOn();
+    redOn();
   } else {
     towardB = false;
-    redOn();
+    blueOn();
   }
-
-  // getLocation();
-  // assign direction
-  // if(positionX < 0) {
-  //   towardB = true;
-  // } else {
-  //   towardB = false;
-  // }
 }
 
 // Overflow actions (enable both motors)
 ISR(TIMER1_OVF_vect) {
-  set(PORTB,LEFT_ENABLE);
-  set(PORTB,RIGHT_ENABLE);
+  if(!left_stopped) {
+   set(PORTB,LEFT_ENABLE);
+  }
+  if(!right_stopped) {
+    set(PORTB,RIGHT_ENABLE);
+  }
 }
 
 // Channel B actions (turn off left motor)

@@ -123,11 +123,11 @@ void init(void) {
     clear(DDRD,FRONT_RIGHT_SENSOR); // initialize for input
    clear(PORTD,FRONT_RIGHT_SENSOR); // disable pullup resistor
 
-    clear(DDRD,FRONT_CENTER_SENSOR); // initialize for input
-   clear(PORTD,FRONT_CENTER_SENSOR); // disable pullup resistor
+    clear(DDRD,PUCK_LEFT_SENSOR); // initialize for input
+   clear(PORTD,PUCK_LEFT_SENSOR); // disable pullup resistor
 
-   clear(DDRD,PUCK_SENSOR); // initialize for input
-   clear(PORTD,PUCK_SENSOR); // disable pullup resistor
+   clear(DDRF,PUCK_RIGHT_SENSOR); // initialize for input
+   clear(PORTF,PUCK_RIGHT_SENSOR); // disable pullup resistor
 
    // LED Switch input
    clear(DDRF,LED_IN); // initialize for input

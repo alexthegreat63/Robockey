@@ -10,11 +10,6 @@
 #include "m_general.h"
 #include "r_parameters.h"
 
- // output pins for blue/red LEDs. All Port F.
-#define BLUE 5
-#define RED 6
-#define LED_IN 7
-
 extern bool packet_received;
 extern bool stop_flag;
 extern unsigned char score_us;

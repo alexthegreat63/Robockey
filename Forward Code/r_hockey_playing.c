@@ -36,16 +36,16 @@ void goToGoal() {
   int y_low;
   int x;
   if(towardB) {
-    y_high = Y_GOAL_B_HIGH;
-    y_low = Y_GOAL_B_LOW;
-    x = X_GOAL_B;
+    y_high = Y_GOAL_BLUE_HIGH;
+    y_low = Y_GOAL_BLUE_LOW;
+    x = X_GOAL_BLUE;
   } else {
-    y_high = Y_GOAL_A_HIGH;
-    y_low = Y_GOAL_A_LOW;
-    x = X_GOAL_A;
+    y_high = Y_GOAL_RED_HIGH;
+    y_low = Y_GOAL_RED_LOW;
+    x = X_GOAL_RED;
   }
-  double theta_goal_high = -atan2(y_high-positionY,x-positionX); // angle to high side of the goal
-  double theta_goal_low = -atan2(y_low-positionY,x-positionX); // angle to low side of the goal
+  double theta_goal_high = atan2(y_high-positionY,x-positionX); // angle to high side of the goal
+  double theta_goal_low = atan2(y_low-positionY,x-positionX); // angle to low side of the goal
   if(theta > 3.14159) {
     theta -= 2*3.14159;
   } else if (theta < -3.14159) {
@@ -53,12 +53,12 @@ void goToGoal() {
   }
   if(theta-theta_goal_high<0) { // rotate right
     m_green(OFF);
-    driveRightMotor(true,MOTOR_SPEED);
-    driveLeftMotor(false,MOTOR_SPEED);
-  } else if(theta-theta_goal_low>0) { // rotate left
-    m_green(OFF);
     driveRightMotor(false,MOTOR_SPEED);
     driveLeftMotor(true,MOTOR_SPEED);
+  } else if(theta-theta_goal_low>0) { // rotate left
+    m_green(OFF);
+    driveRightMotor(true,MOTOR_SPEED);
+    driveLeftMotor(false,MOTOR_SPEED);
   } else {
     m_green(ON);
     driveLeftMotor(true,MOTOR_SPEED);

@@ -28,6 +28,9 @@ extern double positionY; // robot's current y position
 extern bool towardB; // direction of robot: 1 towards B, 0 towards A
 extern bool isBlue; // Indicates team color of robot.
 
+extern bool left_stopped;
+extern bool right_stopped;
+
 /*
  * Drive the left motor forward
  * Inputs: 
@@ -35,6 +38,7 @@ extern bool isBlue; // Indicates team color of robot.
  *  duty (0xFFFF = 100% duty, 0 = 0% duty)
  */
 void driveLeftMotor(bool direction, unsigned int duty) {
+  left_stopped = false;
   if(direction) {
     set(PORTB,LEFT_DIRECTION);
   } else {
@@ -50,10 +54,19 @@ void driveLeftMotor(bool direction, unsigned int duty) {
  *  duty (0xFFFF = 100% duty, 0 = 0% duty)
  */
 void driveRightMotor(bool direction, unsigned int duty) {
+  right_stopped = false;
   if(direction) {
     set(PORTB,RIGHT_DIRECTION);
   } else {
     clear(PORTB,RIGHT_DIRECTION);
   }
   OCR1C = duty;
+}
+
+void stopLeft() {
+  left_stopped = true;
+}
+
+void stopRight() {
+  right_stopped = true;
 }
