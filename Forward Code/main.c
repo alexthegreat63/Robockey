@@ -44,6 +44,7 @@ bool isBlue = false; // Indicates team color of robot.
 
 bool left_stopped = false;
 bool right_stopped = false;
+bool g_stopped = false;
 
 /* Method Declarations */
 void init(void);
@@ -55,6 +56,7 @@ int main_get_location();
 int main_puck_sense_test();
 int main_ir_test();
 int main_find_puck();
+int main_goalie_test();
 
 int main(void) {
   // main_motor_test();
