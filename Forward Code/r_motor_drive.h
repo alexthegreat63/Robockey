@@ -16,6 +16,9 @@
 
 void driveLeftMotor(bool direction, unsigned int duty);
 void driveRightMotor(bool direction, unsigned int duty);
+void rotateRight();
+void rotateLeft();
+void driveForward();
 void stopLeft();
 void stopRight();
 

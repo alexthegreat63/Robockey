@@ -63,6 +63,21 @@ void driveRightMotor(bool direction, unsigned int duty) {
   OCR1C = duty;
 }
 
+void rotateRight() {
+  driveLeftMotor(true, MOTOR_SPEED);
+  driveRightMotor(false,MOTOR_SPEED);
+}
+
+void rotateLeft() {
+  driveLeftMotor(false, MOTOR_SPEED);
+  driveRightMotor(true,MOTOR_SPEED);
+}
+
+void driveForward() {
+  driveRightMotor(true,MOTOR_SPEED);
+  driveLeftMotor(true,MOTOR_SPEED);
+}
+
 void stopLeft() {
   left_stopped = true;
 }

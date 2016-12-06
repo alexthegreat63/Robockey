@@ -124,9 +124,8 @@ void goToGoal() {
   //     m_green(ON);
   //   }
   // }
-
   
-  double midpointCompare = angleRange(angleRange(theta_goal_low+theta_goal_high)/2+M_PI);
+  double midpointCompare = angleRange((theta_goal_low+theta_goal_high)/2+M_PI);
   if(wrapCompare(theta,theta_goal_high,midpointCompare)) {
     m_green(OFF);
     if(towardB) {
@@ -159,26 +158,38 @@ void engageTrain(int otherX, int otherY, double otherTheta) {
   int aimForY = otherY - otherUnitY * TRAIN_DISTANCE; // y position to aim for
 
   // Compute angle our robot should take, with padding on both sides
-  double thetaToOther = -atan2(aimForY-positionY,aimForX-positionX);
+  double thetaToOther = atan2(aimForY-positionY,aimForX-positionX);
   double thetaAimHigh = thetaToOther + TRAIN_THETA_PAD;
   double thetaAimLow = thetaToOther - TRAIN_THETA_PAD;
-
-  if(theta > 3.14159) {
-    theta -= 2*3.14159;
-  } else if (theta < -3.14159) {
-    theta+= 2*3.14159;
-  }
-  if(theta-thetaAimHigh<0) { // rotate right
-    m_green(ON);
-    driveRightMotor(true,MOTOR_SPEED);
-    driveLeftMotor(false,MOTOR_SPEED);
-  } else if(theta-thetaAimLow>0) { // rotate left
-    m_green(OFF);
-    driveRightMotor(false,MOTOR_SPEED);
-    driveLeftMotor(true,MOTOR_SPEED);
-  } else {
-    m_green(ON);
-    driveLeftMotor(true,MOTOR_SPEED);
-    driveRightMotor(true,MOTOR_SPEED);
+  double midpointCompare = angleRange((thetaAimHigh+thetaAimLow)/2+M_PI);
+  // if we're out of range of the target point
+  if(pow(aimForX-positionX,2)+pow(aimForY-positionY,2) > TRAIN_DISTANCE) {
+    if(wrapCompare(theta,thetaAimHigh,midpointCompare)) { // rotate right
+      m_green(ON);
+      driveRightMotor(true,MOTOR_SPEED);
+      driveLeftMotor(false,MOTOR_SPEED);
+    } else if(wrapCompare(theta,thetaAimLow,midpointCompare)) { // rotate left
+      m_green(OFF);
+      driveRightMotor(false,MOTOR_SPEED);
+      driveLeftMotor(true,MOTOR_SPEED);
+    } else {
+      m_green(ON);
+      driveLeftMotor(true,MOTOR_SPEED);
+      driveRightMotor(true,MOTOR_SPEED);
+    }
+  } else { // if we're in the proper xy range to push
+    double angleThresh = angleRange(otherTheta+M_PI);
+    // if angle is correct
+    if(wrapCompare(theta,otherTheta+TRAIN_THETA_PAD,angleThresh)) {
+      rotateRight();
+      m_green(OFF);
+    } else if(wrapCompare(theta,otherTheta-TRAIN_THETA_PAD,angleThresh)) {
+      rotateLeft();
+      m_green(OFF);
+    } else {
+      m_green(ON);
+      driveLeftMotor(true,MOTOR_SPEED);
+      driveRightMotor(true,MOTOR_SPEED);
+    }
   }
 }

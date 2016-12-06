@@ -23,6 +23,11 @@
 #include "r_hockey_playing.h"
 #include "r_puck_sense.h"
 
+#include "g_goalkeeping.h"
+#include "g_init.h"
+#include "g_motor_drive.h"
+#include "g_parameters.h"
+
 char buffer[PACKET_LENGTH];
 bool packet_received = false;
 bool stop_flag = true;
@@ -68,6 +73,16 @@ int main(void) {
   // main_find_puck();
   // main_ir_test();
   while(1);
+}
+
+int main_goalie_test() {
+  g_init();
+  while(1) {
+    processPacket();
+    g_assignDirection();
+    getLocation();
+    g_puckFind();
+  }
 }
 
 // Reads new packet and sets variables accordingly.
