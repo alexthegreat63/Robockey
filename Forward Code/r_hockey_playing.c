@@ -1,4 +1,4 @@
-/* Name: r_puck_sense.c
+/* Name: r_hockey_playing.c
  * Authors: Alex Kearns, Nick Trivelis, Lincoln Talbott, Anirudh
  * kearnsa@seas.upenn.edu
  *
@@ -7,9 +7,11 @@
  * Controls robot for Robockey tournament
  */
 
+#include "m_usb.h"
 #include "m_general.h"
 #include "r_motor_drive.h"
 #include "r_parameters.h"
+#include "r_geometry.h"
 
 extern char buffer[PACKET_LENGTH];
 extern bool packet_received;
@@ -32,9 +34,9 @@ extern bool isBlue; // Indicates team color of robot.
 
 // Causes robot to go directly to desired goal
 void goToGoal() {
-  int y_high;
-  int y_low;
-  int x;
+  double y_high;
+  double y_low;
+  double x;
   if(towardB) {
     y_high = Y_GOAL_BLUE_HIGH;
     y_low = Y_GOAL_BLUE_LOW;
@@ -44,25 +46,109 @@ void goToGoal() {
     y_low = Y_GOAL_RED_LOW;
     x = X_GOAL_RED;
   }
+
   double theta_goal_high = atan2(y_high-positionY,x-positionX); // angle to high side of the goal
   double theta_goal_low = atan2(y_low-positionY,x-positionX); // angle to low side of the goal
-  if(theta > 3.14159) {
-    theta -= 2*3.14159;
-  } else if (theta < -3.14159) {
-    theta+= 2*3.14159;
-  }
-  if(theta-theta_goal_high<0) { // rotate right
+  //   m_usb_tx_char('x');
+  // m_usb_tx_int(positionX);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  //   m_usb_tx_char('y');
+  // m_usb_tx_int(positionY);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('a');
+  // m_usb_tx_int((int) (theta*100));
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('h');
+  // m_usb_tx_int((int) (theta_goal_high*100));
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('l');
+  // m_usb_tx_int((int) (theta_goal_low*100));
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+
+  // if(theta-theta_goal_high<0) { // rotate right
+  //   m_green(OFF);
+  //   driveRightMotor(true,MOTOR_SPEED);
+  //   driveLeftMotor(false,MOTOR_SPEED);
+  // } else if(theta-theta_goal_low>0) { // rotate left
+  //   m_green(OFF);
+  //   driveRightMotor(false,MOTOR_SPEED);
+  //   driveLeftMotor(true,MOTOR_SPEED);
+  // } else {
+  //   m_green(ON);
+  //   driveLeftMotor(true,MOTOR_SPEED);
+  //   driveRightMotor(true,MOTOR_SPEED);
+  // }
+
+  //a183
+  //h-277
+  //l-251
+
+  // if(x<0) {
+  //   double avg = (theta_goal_high+theta_goal_low)/2+3.14159;
+  //   avg = angleRange(avg);
+
+  //   if(theta<theta_goal_high && theta >= avg) {
+  //     driveRightMotor(true,MOTOR_SPEED);
+  //     driveLeftMotor(false,MOTOR_SPEED);
+  //     m_green(OFF);
+  //   } else if(theta>theta_goal_low && theta <= avg) {
+  //     driveRightMotor(false,MOTOR_SPEED);
+  //     driveLeftMotor(true,MOTOR_SPEED);
+  //     m_green(OFF);
+  //   } else {
+  //     m_green(ON);
+  //     driveRightMotor(true,MOTOR_SPEED);
+  //     driveLeftMotor(true,MOTOR_SPEED);
+  //   }
+  // } else {
+  //   double avg = (theta_goal_high+theta_goal_low)/2+3.14159;
+  //   avg = angleRange(avg);
+  //   if(theta>theta_goal_high && theta <= avg) {
+  //     driveRightMotor(false,MOTOR_SPEED);
+  //     driveLeftMotor(true,MOTOR_SPEED);
+  //     m_green(OFF);
+  //   } else if(theta<theta_goal_low && theta >= avg) {
+  //     driveRightMotor(false,MOTOR_SPEED);
+  //     driveLeftMotor(true,MOTOR_SPEED);
+  //     m_green(OFF);
+  //   } else {
+  //     driveRightMotor(true,MOTOR_SPEED);
+  //     driveLeftMotor(true,MOTOR_SPEED);
+  //     m_green(ON);
+  //   }
+  // }
+
+  
+  double midpointCompare = angleRange(angleRange(theta_goal_low+theta_goal_high)/2+M_PI);
+  if(wrapCompare(theta,theta_goal_high,midpointCompare)) {
     m_green(OFF);
-    driveRightMotor(false,MOTOR_SPEED);
-    driveLeftMotor(true,MOTOR_SPEED);
-  } else if(theta-theta_goal_low>0) { // rotate left
+    if(towardB) {
+      driveRightMotor(true,MOTOR_SPEED);
+      driveLeftMotor(false,MOTOR_SPEED);
+    } else {
+      driveRightMotor(false,MOTOR_SPEED);
+      driveLeftMotor(true,MOTOR_SPEED);
+    }
+  } else if(wrapCompare(theta,theta_goal_low,midpointCompare)) {
     m_green(OFF);
-    driveRightMotor(true,MOTOR_SPEED);
-    driveLeftMotor(false,MOTOR_SPEED);
+    if(towardB) {
+      driveRightMotor(false,MOTOR_SPEED);
+      driveLeftMotor(true,MOTOR_SPEED);
+    } else {
+      driveRightMotor(true,MOTOR_SPEED);
+      driveLeftMotor(false,MOTOR_SPEED);
+    }
   } else {
     m_green(ON);
-    driveLeftMotor(true,MOTOR_SPEED);
     driveRightMotor(true,MOTOR_SPEED);
+    driveLeftMotor(true,MOTOR_SPEED);
   }
 }
 

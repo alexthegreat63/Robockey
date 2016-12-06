@@ -54,13 +54,16 @@ int main_goal_test();
 int main_get_location();
 int main_puck_sense_test();
 int main_ir_test();
+int main_find_puck();
 
 int main(void) {
   // main_motor_test();
+  // init_usb();
   main_goal_test();  
   // main_get_location();
   // screen /dev/tty.usbmodem411
-  //main_puck_sense_test();
+  // main_puck_sense_test();
+  // main_find_puck();
   // main_ir_test();
   while(1);
 }
@@ -87,9 +90,9 @@ int main_ir_test() {
 // Performs finding puck and going to goal routine
 int main_find_puck() {
   init();
+  assignDirection();
   while(1) {
     processPacket();
-    assignDirection();
     getLocation();
     stop_flag = false;
     if(stop_flag) {
@@ -136,7 +139,7 @@ int main_goal_test() {
   init();
   while(1) {
     assignDirection();
-   if(!missedPoint) {
+    if(!missedPoint) {
       m_red(ON);
     } else {
       m_red(OFF);

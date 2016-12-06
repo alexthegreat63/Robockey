@@ -8,6 +8,7 @@
 #ifndef r_parameters__
 #define r_parameters__
 
+
 // output pins to motor driver. All Port B.
 #define SYSTEM_FREQ 16000000 // system clock frequency, Hz
 #define RIGHT_ENABLE 0
@@ -36,13 +37,21 @@
 #define ADDRESS 40 // address for robot 1
 #define PACKET_LENGTH 10 // bytes
 
- // Important locations
-#define X_GOAL_RED -263
+// Important locations
+ // Wu and Chen
+// #define X_GOAL_RED -263 
+// #define Y_GOAL_RED_HIGH 35
+// #define Y_GOAL_RED_LOW -111
+// #define X_GOAL_BLUE 322
+// #define Y_GOAL_BLUE_HIGH 74
+// #define Y_GOAL_BLUE_LOW -73
+ //Levin Lobby
+ #define X_GOAL_RED -263 
 #define Y_GOAL_RED_HIGH 35
-#define Y_GOAL_RED_LOW -111
-#define X_GOAL_BLUE 322
-#define Y_GOAL_BLUE_HIGH 74
-#define Y_GOAL_BLUE_LOW -73
+#define Y_GOAL_RED_LOW -118
+#define X_GOAL_BLUE 310
+#define Y_GOAL_BLUE_HIGH 84
+#define Y_GOAL_BLUE_LOW -49
 
 // Distance behind other robot for train
 #define TRAIN_DISTANCE 15

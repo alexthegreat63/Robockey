@@ -122,7 +122,12 @@ void getLocation() {
 
     positionX = -positionX_frame*cos(theta_frame)-positionY_frame*sin(theta_frame);
     positionY = positionX_frame*sin(theta_frame)-positionY_frame*cos(theta_frame);
-    theta = theta_frame;
+    theta = -theta_frame;
+    if(theta > 3.14159) {
+      theta = theta - 6.283196;
+    } else if(theta < -3.14159) {
+      theta = theta + 6.283196;
+    }
     //positionX = positionX_frame;
     //positionY = positionY_frame;
     //theta = theta_frame;
