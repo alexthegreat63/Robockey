@@ -111,7 +111,6 @@ int main_find_puck() {
     assignDirection();
     processPacket();
     getLocation();
-    stop_flag = false;
     if(stop_flag) {
       stopLeft();
       stopRight();
@@ -231,5 +230,4 @@ ISR(TIMER1_COMPC_vect) {
 /** Activated when RF packet received */
 ISR(INT2_vect) {
   packet_received = true;
-  m_rf_read(buffer, PACKET_LENGTH);
 }

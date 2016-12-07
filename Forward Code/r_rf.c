@@ -40,25 +40,33 @@ void processPacket() {
     
     if(buffer[0] == 0xA0) { // Comm Test
       stop_flag = true;
-    if(isBlue) {
-      blueOn();
-      m_wait(1000);
-      ledOff();
-    }
-    else {
-      redOn();
-      m_wait(1000);
-      ledOff();
-    }
+      if(isBlue) {
+        ledOff();
+        m_wait(1000);
+        blueOn();
+        wait(1000);
+        ledOff();
+        wait(1000);
+        blueOn();
+      }
+      else {
+        ledOff();
+        m_wait(1000);
+        redOn();
+        wait(1000);
+        ledOff();
+        wait(1000);
+        redOn();
+      }
     }
     else if(buffer[0] == 0xA1) { // Play
       stop_flag = false;
-    if(isBlue) {
-      blueOn();
-    }
-    else {
-      redOn();
-    }
+      if(isBlue) {
+        blueOn();
+      }
+      else {
+        redOn();
+      }
     }
     else if(buffer[0] == 0xA2) { // Goal R
       stop_flag = true;
