@@ -30,7 +30,7 @@
 #define LED_IN 0
 
 // Motor Parameters:
-#define MOTOR_SPEED 0xFFFF/4
+#define MOTOR_SPEED 0xFFFF/2
 
 //RF Parameters:
 #define CHANNEL 1

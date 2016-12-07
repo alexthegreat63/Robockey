@@ -110,11 +110,11 @@ int main_find_puck() {
   while(1) {
     assignDirection();
     processPacket();
-    getLocation();
     if(stop_flag) {
       stopLeft();
       stopRight();
     } else {
+      getLocation();
       puckFind();
     }
   }
