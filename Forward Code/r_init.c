@@ -143,7 +143,7 @@ void init(void) {
    * Initialize mRF module
    */
 
-   //m_rf_open(CHANNEL, ADDRESS, PACKET_LENGTH);
+   m_rf_open(CHANNEL, ADDRESS, PACKET_LENGTH);
 
    //m_red(OFF);
 
