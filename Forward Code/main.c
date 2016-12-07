@@ -45,7 +45,7 @@ double positionY; // robot's current y position
 
 // NOTE - These variables must be retreived from switch values at init().
 bool towardB = false; // direction of robot: 1 towards B, 0 towards A
-bool isBlue = false; // Indicates team color of robot.
+// bool isBlue = false; // Indicates team color of robot.
 
 bool left_stopped = false;
 bool right_stopped = false;

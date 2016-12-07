@@ -120,10 +120,10 @@ void init(void) {
    clear(DDRD,FRONT_LEFT_SENSOR); // initialize for input
    clear(PORTD,FRONT_LEFT_SENSOR); // disable pullup resistor
 
-    clear(DDRD,FRONT_RIGHT_SENSOR); // initialize for input
+   clear(DDRD,FRONT_RIGHT_SENSOR); // initialize for input
    clear(PORTD,FRONT_RIGHT_SENSOR); // disable pullup resistor
 
-    clear(DDRD,PUCK_LEFT_SENSOR); // initialize for input
+   clear(DDRD,PUCK_LEFT_SENSOR); // initialize for input
    clear(PORTD,PUCK_LEFT_SENSOR); // disable pullup resistor
 
    clear(DDRF,PUCK_RIGHT_SENSOR); // initialize for input

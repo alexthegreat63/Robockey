@@ -61,12 +61,6 @@ void processPacket() {
     }
     else if(buffer[0] == 0xA1) { // Play
       stop_flag = false;
-      if(isBlue) {
-        blueOn();
-      }
-      else {
-        redOn();
-      }
     }
     else if(buffer[0] == 0xA2) { // Goal R
       stop_flag = true;
