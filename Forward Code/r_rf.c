@@ -44,18 +44,18 @@ void processPacket() {
         ledOff();
         m_wait(1000);
         blueOn();
-        wait(1000);
+        m_wait(1000);
         ledOff();
-        wait(1000);
+        m_wait(1000);
         blueOn();
       }
       else {
         ledOff();
         m_wait(1000);
         redOn();
-        wait(1000);
+        m_wait(1000);
         ledOff();
-        wait(1000);
+        m_wait(1000);
         redOn();
       }
     }
