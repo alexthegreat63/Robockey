@@ -44,19 +44,18 @@ double angleRange(double th) {
 // finds if thCheck is in smallest range of th1 and th2
 // returns true if it is, false if it isn't
 bool wrapCompare(double thCheck, double th1, double th2) {
-  bool inRange;
   if(angleRange(th1-th2)<M_PI && angleRange(th1-th2)>=0) {
     if(angleRange(th1-thCheck) > 0 && angleRange(thCheck-th2) > 0) {
-      inRange = true;
+      return true;
     } else {
-      inRange = false;  
+      return false;  
     }
   } else { // th2 is more positive than th1
     if(angleRange(th2-thCheck) > 0 && angleRange(thCheck-th1) > 0) {
-      inRange = true;
+      return true;
     } else {
-      inRange = false;
+      return false;
     }
   }
-  return inRange;
+  return false;
 }

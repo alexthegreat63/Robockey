@@ -66,11 +66,11 @@ int main_goalie_test();
 int main(void) {
   // main_motor_test();
   // init_usb();
-  main_goal_test();  
+  // main_goal_test();
   // main_get_location();
   // screen /dev/tty.usbmodem411
   // main_puck_sense_test();
-  // main_find_puck();
+  main_find_puck();
   // main_ir_test();
   while(1);
 }
@@ -107,8 +107,8 @@ int main_ir_test() {
 // Performs finding puck and going to goal routine
 int main_find_puck() {
   init();
-  assignDirection();
   while(1) {
+    assignDirection();
     processPacket();
     getLocation();
     stop_flag = false;
@@ -194,6 +194,7 @@ void assignDirection() {
   }
 }
 
+/** Forward motor interrupts */
 // Overflow actions (enable both motors)
 ISR(TIMER1_OVF_vect) {
   if(!left_stopped) {
@@ -214,7 +215,20 @@ ISR(TIMER1_COMPC_vect) {
   clear(PORTB,RIGHT_ENABLE);
 }
 
-// Activated when RF packet received
+/** Goalie motor interrupts */
+// Overflow actions (enable both motors)
+// ISR(TIMER1_OVF_vect) {
+//   if(!g_stopped) {
+//    set(PORTB,G_ENABLE);
+//   }
+// }
+
+// // Channel B actions (turn off left motor)
+// ISR(TIMER1_COMPB_vect) {
+//   clear(PORTB,G_ENABLE);
+// }
+
+/** Activated when RF packet received */
 ISR(INT2_vect) {
   packet_received = true;
   m_rf_read(buffer, PACKET_LENGTH);

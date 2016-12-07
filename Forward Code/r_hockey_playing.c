@@ -49,28 +49,7 @@ void goToGoal() {
 
   double theta_goal_high = atan2(y_high-positionY,x-positionX); // angle to high side of the goal
   double theta_goal_low = atan2(y_low-positionY,x-positionX); // angle to low side of the goal
-  //   m_usb_tx_char('x');
-  // m_usb_tx_int(positionX);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  //   m_usb_tx_char('y');
-  // m_usb_tx_int(positionY);
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  // m_usb_tx_char('a');
-  // m_usb_tx_int((int) (theta*100));
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  // m_usb_tx_char('h');
-  // m_usb_tx_int((int) (theta_goal_high*100));
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  // m_usb_tx_char('l');
-  // m_usb_tx_int((int) (theta_goal_low*100));
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
-  // m_usb_tx_char('\r');
-  // m_usb_tx_char('\n');
+  
 
   // if(theta-theta_goal_high<0) { // rotate right
   //   m_green(OFF);
@@ -125,7 +104,42 @@ void goToGoal() {
   //   }
   // }
   
-  double midpointCompare = angleRange((theta_goal_low+theta_goal_high)/2+M_PI);
+  double midpointCompare;
+  midpointCompare = angleRange(angleRange((theta_goal_low+theta_goal_high)/2+M_PI));
+  if(wrapCompare(midpointCompare,theta_goal_low,theta_goal_high)) {
+    midpointCompare = angleRange(midpointCompare+M_PI);
+  }
+
+
+  // double tl;
+  // double th;
+  // if(!towardB) {
+  //   if (theta_goal_low < 0) {
+  //     tl = theta_goal_low + 2*M_PI;
+  //   } else {
+  //     tl = theta_goal_low;
+  //   }
+  //   if (theta_goal_high < 0) {
+  //     th = theta_goal_high + 2*M_PI;
+  //   } else {
+  //     th = theta_goal_high;
+  //   }
+  //   midpointCompare = angleRange(angleRange((tl+th)/2+M_PI));
+  // } else {
+  //   midpointCompare = angleRange(angleRange((tl+th)/2+M_PI));
+  // }
+
+
+  // if (towardB) {
+  //   midpointCompare = M_PI;
+  // } else {
+  //   midpointCompare = 0;
+  // }
+  // if(towardB) {
+  //   midpointCompare = angleRange((theta_goal_low+theta_goal_high)/2+M_PI);
+  // } else {
+  //   midpointCompare = angleRange((theta_goal_low+theta_goal_high)/2);
+  // }
   if(wrapCompare(theta,theta_goal_high,midpointCompare)) {
     m_green(OFF);
     if(towardB) {
@@ -149,6 +163,33 @@ void goToGoal() {
     driveRightMotor(true,MOTOR_SPEED);
     driveLeftMotor(true,MOTOR_SPEED);
   }
+  //   m_usb_tx_char('x');
+  // m_usb_tx_int(positionX);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  //   m_usb_tx_char('y');
+  // m_usb_tx_int(positionY);
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('a');
+  // m_usb_tx_int((int) (theta*100));
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('h');
+  // m_usb_tx_int((int) (theta_goal_high*100));
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('l');
+  // m_usb_tx_int((int) (theta_goal_low*100));
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('m');
+  // m_usb_tx_int((int) (midpointCompare*100));
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_usb_tx_char('\r');
+  // m_usb_tx_char('\n');
+  // m_wait(500);
 }
 
 void engageTrain(int otherX, int otherY, double otherTheta) {
