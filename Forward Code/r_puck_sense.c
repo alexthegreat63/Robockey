@@ -41,7 +41,7 @@ void puckFind() {
     // redOn();
     m_red(ON);
     m_green(ON);
-    //goToGoal();
+    goToGoal();
   } else if(!check(PIND, FRONT_LEFT_SENSOR) || !check(PIND, FRONT_RIGHT_SENSOR)) { // if puck is directly ahead
     driveLeftMotor(true, MOTOR_SPEED);
     driveRightMotor(true, MOTOR_SPEED);
