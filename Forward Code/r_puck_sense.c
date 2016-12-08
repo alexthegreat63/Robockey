@@ -36,25 +36,25 @@ extern bool isBlue; // Indicates team color of robot.
 // Seek puck
 void puckFind() {
   if(!check(PIND, PUCK_LEFT_SENSOR) && !check(PIND, PUCK_RIGHT_SENSOR)) { // if puck is in our posession
-    //m_red(ON);
-    driveForward();
+    m_red(ON);
+    // driveForward();
     m_green(ON);
     // goToGoal();
   } else if(!check(PIND, FRONT_LEFT_SENSOR) || !check(PIND, FRONT_RIGHT_SENSOR)) { // if puck is directly ahead
-    driveLeftMotor(true, MOTOR_SPEED);
-    driveRightMotor(true, MOTOR_SPEED);
-    //m_red(OFF);
-    //m_green(ON);
+    driveLeftMotor(true, MOTOR_SPEED_FORWARD);
+    driveRightMotor(true, MOTOR_SPEED_FORWARD);
+    m_red(OFF);
+    m_green(ON);
   } else if(!check(PIND,LEFT_SENSOR)) { // if puck is to left
-    driveLeftMotor(false, MOTOR_SPEED);
-    driveRightMotor(true, MOTOR_SPEED);
-    //m_red(ON);
-    //m_green(OFF);
+    driveLeftMotor(false, MOTOR_SPEED_ROTATE);
+    driveRightMotor(true, MOTOR_SPEED_ROTATE);
+    m_red(ON);
+    m_green(OFF);
   } else if(!check(PIND,RIGHT_SENSOR)) { // if puck is to right
-    driveLeftMotor(true, MOTOR_SPEED);
-    driveRightMotor(false, MOTOR_SPEED);
-    //m_green(OFF);
-    //m_red(ON);
+    driveLeftMotor(true, MOTOR_SPEED_ROTATE);
+    driveRightMotor(false, MOTOR_SPEED_ROTATE);
+    m_green(OFF);
+    m_red(ON);
   }
   // NOTE: May have to change the order of the if statements. Also, may call goToGoal() from here if PUCK_SENSOR is high.
 }

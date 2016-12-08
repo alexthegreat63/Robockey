@@ -23,12 +23,12 @@
 #include "r_hockey_playing.h"
 #include "r_puck_sense.h"
 
-#include "g_goalkeeping.h"
-#include "g_init.h"
-#include "g_motor_drive.h"
-#include "g_parameters.h"
+// #include "g_goalkeeping.h"
+// #include "g_init.h"
+// #include "g_motor_drive.h"
+// #include "g_parameters.h"
 
-char buffer[10] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+char buffer[PACKET_LENGTH] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 bool packet_received = false;
 bool stop_flag = true;
 unsigned char score_us = 0;
@@ -63,6 +63,7 @@ int main_ir_test();
 int main_find_puck();
 int main_goalie_test();
 int main_find_puck_test();
+int main_comm_test();
 
 int main(void) {
   // main_motor_test();
@@ -75,23 +76,25 @@ int main(void) {
   // NOTE: ADD GOTOGOAL BACK TO PUCKFIND WHEN DONE TESTING
   // main_find_puck_test();
   // main_ir_test();
+  // main_comm_test();
   while(1);
 }
 
-int main_goalie_test() {
-  g_init();
-  while(1) {
-    processPacket();
-    g_assignDirection();
-    getLocation();
-    g_puckFind();
-  }
-}
+// int main_goalie_test() {
+//   g_init();
+//   while(1) {
+//     processPacket();
+//     g_assignDirection();
+//     getLocation();
+//     g_puckFind();
+//   }
+// }
 
 // Reads new packet and sets variables accordingly.
 int main_comm_test() {
 	init();
 	while(1) {
+    assignDirection();
     processPacket();
 	}
 }
@@ -244,13 +247,4 @@ ISR(TIMER1_COMPC_vect) {
 /** Activated when RF packet received */
 ISR(INT2_vect) {
   packet_received = true;
-  ledOff();
-  m_wait(500);
-  if(towardB) {
-    redOn();
-  } else {
-    blueOn();
-  }
-  m_wait(500);
-  ledOff();
 }

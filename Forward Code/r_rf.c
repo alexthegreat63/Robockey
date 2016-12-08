@@ -34,73 +34,114 @@ extern bool towardB; // direction of robot: 1 towards B, 0 towards A
 extern bool isBlue; // Indicates team color of robot.
 
 void processPacket() {
-  char buf[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-  if(packet_received == true) {
+  if(packet_received) {
     packet_received = false;
-    if(m_rf_read(buffer, 10)) {
-      m_green(ON);
-    }
-    if(buf[0] == 0xA0) { // Comm Test
-      m_red(ON);
-      m_wait(1000);
-      m_red(OFF);
-      stop_flag = true;
-      if(!towardB) {
+    char buf[10];
+    m_rf_read(buf, 10);
+    switch(((unsigned char) buf[0])) {
+      case 0xA0:
         ledOff();
-        m_wait(1000);
-        blueOn();
-        m_wait(1000);
-        ledOff();
-        m_wait(1000);
-        blueOn();
-      }
-      else {
-        ledOff();
-        m_wait(1000);
-        redOn();
-        m_wait(1000);
-        ledOff();
-        m_wait(1000);
-        redOn();
-      }
-    }
-    else if(buffer[0] == 0xA1) { // Play
-      stop_flag = false;
-    }
-    else if(buffer[0] == 0xA2) { // Goal R
-      stop_flag = true;
-      if(towardB == 0) {
-        score_us = buffer[2];
-        score_them = buffer[3];
-      }
-      else {
-        score_us = buffer[3];
-        score_them = buffer[2];
-      }
-    }
-    else if(buffer[0] == 0xA3) { // Goal B
-      stop_flag = true;
-      if(towardB == false) {
-        score_us = buffer[2];
-        score_them = buffer[3];
-      }
-      else {
-        score_us = buffer[3];
-        score_them = buffer[2];
-      }
-    }
-    else if(buffer[0] == 0xA4) { // Pause
-      stop_flag = true;
-    }
-    else if(buffer[0] == 0xA6) { // Halftime
-      stop_flag = true;
-    }
-    else if(buffer[0] == 0xA7) { // Game Over
-      stop_flag = true; 
-      ledOff();
-    }
-    else {
-      // Nothing
+        if(towardB) {
+          redOn();
+          m_wait(500);
+          ledOff();
+          m_wait(500);
+          redOn();
+          m_wait(500);
+        } else {
+          blueOn();
+          m_wait(500);
+          ledOff();
+          m_wait(500);
+          blueOn();
+          m_wait(500);
+        }
+        break;
+      case 0xA1:
+        stop_flag = false;
+        break;
+      case 0xA2: 
+        stop_flag = true;
+        break;
+      case 0xA3:
+        stop_flag = true;
+        break;
+      case 0xA4:
+        stop_flag = true;
+        break;
+      case 0xA6:
+        stop_flag = true;
+        break;
     }
   }
 }
+
+  // if(packet_received == true) {
+  //   packet_received = false;
+  //   if(m_rf_read(buffer, 10)) {
+  //     m_green(ON);
+  //   }
+  //   if(buf[0] == 0xA0) { // Comm Test
+  //     m_red(ON);
+  //     m_wait(1000);
+  //     m_red(OFF);
+  //     stop_flag = true;
+  //     if(!towardB) {
+  //       ledOff();
+  //       m_wait(1000);
+  //       blueOn();
+  //       m_wait(1000);
+  //       ledOff();
+  //       m_wait(1000);
+  //       blueOn();
+  //     }
+  //     else {
+  //       ledOff();
+  //       m_wait(1000);
+  //       redOn();
+  //       m_wait(1000);
+  //       ledOff();
+  //       m_wait(1000);
+  //       redOn();
+  //     }
+  //   }
+  //   else if(buffer[0] == 0xA1) { // Play
+  //     stop_flag = false;
+  //   }
+  //   else if(buffer[0] == 0xA2) { // Goal R
+  //     stop_flag = true;
+  //     if(towardB == 0) {
+  //       score_us = buffer[2];
+  //       score_them = buffer[3];
+  //     }
+  //     else {
+  //       score_us = buffer[3];
+  //       score_them = buffer[2];
+  //     }
+  //   }
+  //   else if(buffer[0] == 0xA3) { // Goal B
+  //     stop_flag = true;
+  //     if(towardB == false) {
+  //       score_us = buffer[2];
+  //       score_them = buffer[3];
+  //     }
+  //     else {
+  //       score_us = buffer[3];
+  //       score_them = buffer[2];
+  //     }
+  //   }
+  //   else if(buffer[0] == 0xA4) { // Pause
+  //     stop_flag = true;
+  //   }
+  //   else if(buffer[0] == 0xA6) { // Halftime
+  //     stop_flag = true;
+  //   }
+  //   else if(buffer[0] == 0xA7) { // Game Over
+  //     stop_flag = true; 
+  //     ledOff();
+  //   }
+  //   else {
+  //     // Nothing
+  //   }
+  // }
+  // }

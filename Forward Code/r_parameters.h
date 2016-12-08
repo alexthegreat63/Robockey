@@ -35,7 +35,7 @@
 
 //RF Parameters:
 #define CHANNEL 1
-#define ADDRESS 0x40 // address for robot 1
+#define ADDRESS 40 // address for robot 1
 #define GOALIE_ADDRESS 42 // address for goalie
 #define PACKET_LENGTH 10 // bytes
 
