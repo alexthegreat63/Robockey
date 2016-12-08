@@ -144,24 +144,28 @@ void goToGoal() {
     m_green(OFF);
     if(towardB) {
       driveRightMotor(true,MOTOR_SPEED_ROTATE);
-      driveLeftMotor(false,MOTOR_SPEED_ROTATE);
+      // stopLeft();
+      driveLeftMotor(true,MOTOR_SPEED_ROTATE/2);
     } else {
-      driveRightMotor(false,MOTOR_SPEED_ROTATE);
+      driveRightMotor(true,MOTOR_SPEED_ROTATE/2);
+      // stopRight();
       driveLeftMotor(true,MOTOR_SPEED_ROTATE);
     }
   } else if(wrapCompare(theta,theta_goal_low,midpointCompare)) {
     m_green(OFF);
     if(towardB) {
-      driveRightMotor(false,MOTOR_SPEED_ROTATE);
+      // stopRight();
+      driveRightMotor(true,MOTOR_SPEED_ROTATE/2);
       driveLeftMotor(true,MOTOR_SPEED_ROTATE);
     } else {
       driveRightMotor(true,MOTOR_SPEED_ROTATE);
-      driveLeftMotor(false,MOTOR_SPEED_ROTATE);
+      driveLeftMotor(true,MOTOR_SPEED_ROTATE/2);
+      // stopLeft();
     }
   } else {
     m_green(ON);
-    driveRightMotor(true,MOTOR_SPEED_ROTATE);
-    driveLeftMotor(true,MOTOR_SPEED_ROTATE);
+    driveRightMotor(true,MOTOR_SPEED_FORWARD);
+    driveLeftMotor(true,MOTOR_SPEED_FORWARD);
   }
   //   m_usb_tx_char('x');
   // m_usb_tx_int(positionX);

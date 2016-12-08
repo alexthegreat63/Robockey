@@ -61,18 +61,20 @@ int main_get_location();
 int main_puck_sense_test();
 int main_ir_test();
 int main_find_puck();
+int main_find_puck_no_comms();
 int main_goalie_test();
 int main_find_puck_test();
 int main_comm_test();
 
 int main(void) {
+  // main_find_puck(); // THIS IS THE MAIN COMPETITION FUNCTION - contains comms
+  // main_goal_test(); // test going to goal (no comms)
+  main_find_puck_no_comms(); // Test whole workflow with no comms
   // main_motor_test();
   // init_usb();
-  // main_goal_test();
   // main_get_location();
   // screen /dev/tty.usbmodem411
   // main_puck_sense_test();
-  main_find_puck(); // THIS IS THE MAIN COMPETITION FUNCTION
   // NOTE: ADD GOTOGOAL BACK TO PUCKFIND WHEN DONE TESTING
   // main_find_puck_test();
   // main_ir_test();
@@ -90,6 +92,41 @@ int main(void) {
 //   }
 // }
 
+
+
+// Performs finding puck and going to goal routine
+int main_find_puck() {
+  init();
+  while(1) {
+    assignDirection();
+    processPacket();
+    if(stop_flag) {
+      stopLeft();
+      stopRight();
+    } else {
+      getLocation();
+      puckFind();
+    }
+  }
+}
+
+// Performs finding puck and going to goal routine
+int main_find_puck_no_comms() {
+  init();
+  while(1) {
+    assignDirection();
+    processPacket();
+    stop_flag = false;
+    if(stop_flag) {
+      stopLeft();
+      stopRight();
+    } else {
+      getLocation();
+      puckFind();
+    }
+  }
+}
+
 // Reads new packet and sets variables accordingly.
 int main_comm_test() {
 	init();
@@ -106,22 +143,6 @@ int main_ir_test() {
       m_red(ON);
     } else {
       m_red(OFF);
-    }
-  }
-}
-
-// Performs finding puck and going to goal routine
-int main_find_puck() {
-  init();
-  while(1) {
-    assignDirection();
-    processPacket();
-    if(stop_flag) {
-      stopLeft();
-      stopRight();
-    } else {
-      getLocation();
-      puckFind();
     }
   }
 }
