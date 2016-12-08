@@ -10,9 +10,11 @@
 #include "m_general.h"
 #include "m_wii.h"
 #include "m_bus.h"
+#include "m_rf.h"
 
 #include "r_parameters.h"
 #include "g_parameters.h"
+
 
 extern char buffer[PACKET_LENGTH];
 extern bool packet_received;
@@ -49,6 +51,8 @@ void g_init(void) {
    */
 
    m_disableJTAG();
+
+   stop_flag = true;
 
   /*
    * Motor Timer Setups
@@ -94,15 +98,19 @@ void g_init(void) {
   * Output pins
   */
   // Enable pins as outputs:
-  set(DDRB,G_ENABLE);
-  set(DDRB,G_RIGHT_DIRECTION);
-  set(DDRF,G_BLUE);
-  set(DDRF,G_RED);
+  set(DDRB,G_ENABLE_1);
+  set(DDRB,G_ENABLE_2);
+  set(DDRB,G_LEFT_DIRECTION_1);
+  set(DDRB,G_LEFT_DIRECTION_2);
+  set(DDRF,BLUE);
+  set(DDRF,RED);
   // set outputs to 0 to start:
-  clear(PORTB,G_ENABLE);
-  clear(PORTB,G_RIGHT_DIRECTION);
-  clear(PORTF,G_BLUE);
-  clear(PORTF,G_RED);
+  clear(PORTB,G_ENABLE_1);
+  clear(PORTB,G_ENABLE_2);
+  clear(PORTB,G_LEFT_DIRECTION_1);
+  clear(PORTB,G_LEFT_DIRECTION_2);
+  clear(PORTF,BLUE);
+  clear(PORTF,RED);
 
   /*
    * Input Pins
@@ -122,8 +130,8 @@ void g_init(void) {
    // clear(PORTD,PUCK_SENSOR); // disable pullup resistor
 
    // LED Switch input
-   clear(DDRF,G_COLOR_IN); // initialize for input
-   set(PORTF,G_COLOR_IN); // enable pullup resistor
+   clear(DDRF,LED_IN); // initialize for input
+   set(PORTF,LED_IN); // enable pullup resistor
 
   /*
    * Initialize Wii Module
@@ -135,7 +143,7 @@ void g_init(void) {
    * Initialize mRF module
    */
 
-   m_rf_open(CHANNEL, ADDRESS, PACKET_LENGTH);
+   m_rf_open(CHANNEL, GOALIE_ADDRESS, PACKET_LENGTH);
 
    m_red(OFF);
  }

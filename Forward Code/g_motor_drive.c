@@ -45,15 +45,18 @@ extern bool g_stopped;
  *  direction (1 right, 0 left)
  *  duty (0xFFFF = 100% duty, 0 = 0% duty)
  */
-void g_driveMotor(bool direction_right, unsigned int duty) {
-  if(direction_right) {
-    set(PORTB,RIGHT_DIRECTION);
+void g_driveMotor(bool direction_left) {
+	stop_flag = false;
+  if(direction_left) {
+    set(PORTB,G_LEFT_DIRECTION_1);
+    set(PORTB,G_LEFT_DIRECTION_2);
   } else {
-    clear(PORTB,RIGHT_DIRECTION);
+    clear(PORTB,G_LEFT_DIRECTION_1);
+    clear(PORTB,G_LEFT_DIRECTION_2);
   }
-  OCR1C = duty;
+  OCR1B = 0xFFFF;
 }
 
 void g_stop() {
-  g_stopped = true;
+  stop_flag = true;
 }

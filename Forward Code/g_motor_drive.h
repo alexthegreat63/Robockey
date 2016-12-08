@@ -14,7 +14,7 @@
 // Public functions:s
 // -----------------------------------------------------------------------------
 
-void g_driveMotor(bool direction, unsigned int duty);
+void g_driveMotor(bool direction_left);
 void g_stop();
 
 #endif

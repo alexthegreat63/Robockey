@@ -42,47 +42,53 @@ extern bool isBlue; // Indicates team color of robot.
 
 // Assigns robot direction to go toward opposite side from starting position
 void g_assignDirection() {
-  if(check(PINF,G_COLOR_IN)) {
+  if(check(PINF,LED_IN)) {
     towardB = true;
-    blueOn();
+    redOn();
     // assign high and low side of goal
-    y_goal_high = Y_GOAL_RED_HIGH;
-    y_goal_low = Y_GOAL_RED_LOW;
+    y_goal_high = G_Y_GOAL_RED_HIGH;
+    y_goal_low = G_Y_GOAL_RED_LOW;
   } else {
     towardB = false;
-    redOn();
-    y_goal_high = Y_GOAL_BLUE_HIGH;
-    y_goal_low = Y_GOAL_BLUE_LOW;
-  }
-  //y_goal_center = (y_goal_low+y_goal_high)/2;
-
-  // Assign right and left directions for goalie based on what goal we're in
-  if(positionX >= 0) {
-    y_goal_left = y_goal_high;
-    y_goal_right = y_goal_low;
-  } else {
-    y_goal_left = y_goal_low;
-    y_goal_right = y_goal_high;
+    blueOn();
+    y_goal_high = G_Y_GOAL_BLUE_HIGH;
+    y_goal_low = G_Y_GOAL_BLUE_LOW;
   }
 }
 
 // Seek puck
 void g_puckFind() {
   if(!check(PIND, G_FRONT_SENSOR)) { // if puck is directly ahead
-    g_driveMotor(true,1); // stop motors
+    g_stop(); // stop motors
+    m_red(ON);
+    m_green(ON);
   } else if(!check(PIND,G_LEFT_SENSOR)) { // if puck is to left
-    if(positionY >= y_goal_high || positionY <= y_goal_low) {
-      g_driveMotor(true,1); // stop motors
+    m_red(OFF);
+    m_green(ON);
+    if(towardB) {
+       if(positionY <= G_Y_GOAL_RED_HIGH) { // if we are in 
+        g_driveMotor(true); // drive motor left
+       }
     } else {
-      g_driveMotor(false, 0xFFFF/4); // move left
+      if(positionY >= G_Y_GOAL_BLUE_LOW) {
+        g_driveMotor(true);
+      }
     }
   } else if(!check(PIND,G_RIGHT_SENSOR)) { // if puck is to right
-    if(positionY >= y_goal_high || positionY <= y_goal_low) {
-      g_driveMotor(true,1); // stop motors
+        m_red(ON);
+    m_green(OFF);
+    if(towardB) {
+       if(positionY >= G_Y_GOAL_RED_LOW) { // if we are in 
+        g_driveMotor(false); // drive motor left
+       }
     } else {
-      g_driveMotor(true, 0xFFFF/4); // move right
+      if(positionY <= G_Y_GOAL_BLUE_HIGH) {
+        g_driveMotor(false);
+      }
     }
   } else { // default state: stop
-    g_driveMotor(true,1);
+    m_red(OFF);
+    m_green(OFF);
+    // keep doing what we were doing as long as we're in bounds
   }
 }

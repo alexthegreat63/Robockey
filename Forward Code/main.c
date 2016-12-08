@@ -5,6 +5,18 @@
  * MEAM 510
  * Robockey Code
  * Controls robot for Robockey tournament
+ * 
+ * Tournament instructions:
+ * Forward:
+ * Comment out all mains but main competition function
+ * Assign proper address (40 or 41)
+ * Comment goalie interrupts at bottom; uncomment normal interrupts
+ * Make sure left_stopped and right_stopped are true
+ * 
+ * Goalie:
+ * Comment out all forward interrupts at bottom; uncomment goalie interrupts
+ * Comment all other main functions except main_goalie
+ * make sure g_stopped is true
  */
 
 #include <avr/io.h>
@@ -23,10 +35,10 @@
 #include "r_hockey_playing.h"
 #include "r_puck_sense.h"
 
-// #include "g_goalkeeping.h"
-// #include "g_init.h"
-// #include "g_motor_drive.h"
-// #include "g_parameters.h"
+#include "g_goalkeeping.h"
+#include "g_init.h"
+#include "g_motor_drive.h"
+#include "g_parameters.h"
 
 char buffer[PACKET_LENGTH] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 bool packet_received = false;
@@ -47,9 +59,9 @@ double positionY; // robot's current y position
 bool towardB = false; // direction of robot: 1 towards B, 0 towards A
 // bool isBlue = false; // Indicates team color of robot.
 
-bool left_stopped = false;
-bool right_stopped = false;
-bool g_stopped = false;
+bool left_stopped = true;
+bool right_stopped = true;
+bool g_stopped = true;
 
 /* Method Declarations */
 void init(void);
@@ -62,14 +74,17 @@ int main_puck_sense_test();
 int main_ir_test();
 int main_find_puck();
 int main_find_puck_no_comms();
-int main_goalie_test();
 int main_find_puck_test();
 int main_comm_test();
+
+int main_goalie(); // TODO: Write
+int main_goalie_test();
+int main_goalie_motor();
 
 int main(void) {
   // main_find_puck(); // THIS IS THE MAIN COMPETITION FUNCTION - contains comms
   // main_goal_test(); // test going to goal (no comms)
-  main_find_puck_no_comms(); // Test whole workflow with no comms
+  // main_find_puck_no_comms(); // Test whole workflow with no comms
   // main_motor_test();
   // init_usb();
   // main_get_location();
@@ -79,20 +94,36 @@ int main(void) {
   // main_find_puck_test();
   // main_ir_test();
   // main_comm_test();
+
+  /* Goalkeeper */
+  //main_goalie(); // COMPETITION FUNCTION FOR GOALIE
+  main_goalie_test();
+  // main_goalie_motor();
+
   while(1);
 }
 
-// int main_goalie_test() {
-//   g_init();
-//   while(1) {
-//     processPacket();
-//     g_assignDirection();
-//     getLocation();
-//     g_puckFind();
-//   }
-// }
+int main_goalie_test() {
+  g_init();
+  while(1) {
+    processPacket();
+    assignDirection();
+    getLocation();
+    g_puckFind();
+  }
+}
 
-
+int main_goalie_motor() {
+  g_init();
+  while(1) {
+    assignDirection();
+    if(towardB) {
+      g_driveMotor(true); // turn motors right
+    } else {
+      g_stop();
+    }
+  }
+}
 
 // Performs finding puck and going to goal routine
 int main_find_puck() {
@@ -233,37 +264,39 @@ void assignDirection() {
 
 /** Forward motor interrupts */
 // Overflow actions (enable both motors)
-ISR(TIMER1_OVF_vect) {
-  if(!left_stopped) {
-   set(PORTB,LEFT_ENABLE);
-  }
-  if(!right_stopped) {
-    set(PORTB,RIGHT_ENABLE);
-  }
-}
-
-// Channel B actions (turn off left motor)
-ISR(TIMER1_COMPB_vect) {
-  clear(PORTB,LEFT_ENABLE);
-}
-
-// Channel C actions (turn off right motor)
-ISR(TIMER1_COMPC_vect) {
-  clear(PORTB,RIGHT_ENABLE);
-}
-
-/** Goalie motor interrupts */
-// Overflow actions (enable both motors)
 // ISR(TIMER1_OVF_vect) {
-//   if(!g_stopped) {
-//    set(PORTB,G_ENABLE);
+//   if(!left_stopped) {
+//    set(PORTB,LEFT_ENABLE);
+//   }
+//   if(!right_stopped) {
+//     set(PORTB,RIGHT_ENABLE);
 //   }
 // }
 
 // // Channel B actions (turn off left motor)
 // ISR(TIMER1_COMPB_vect) {
-//   clear(PORTB,G_ENABLE);
+//   clear(PORTB,LEFT_ENABLE);
 // }
+
+// // Channel C actions (turn off right motor)
+// ISR(TIMER1_COMPC_vect) {
+//   clear(PORTB,RIGHT_ENABLE);
+// }
+
+/** Goalie motor interrupts */
+// Overflow actions (enable both motors)
+ISR(TIMER1_OVF_vect) {
+  if(!stop_flag) {
+   set(PORTB,G_ENABLE_1);
+   set(PORTB,G_ENABLE_2);
+  }
+}
+
+// Channel B actions (turn off left motor)
+ISR(TIMER1_COMPB_vect) {
+  clear(PORTB,G_ENABLE_1);
+  clear(PORTB,G_ENABLE_2);
+}
 
 /** Activated when RF packet received */
 ISR(INT2_vect) {
