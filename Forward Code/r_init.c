@@ -11,6 +11,7 @@
 #include "r_parameters.h"
 #include "m_wii.h"
 #include "m_bus.h"
+#include "m_rf.h"
 
 extern char buffer[PACKET_LENGTH];
 extern bool packet_received;

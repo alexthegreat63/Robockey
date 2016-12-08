@@ -8,7 +8,6 @@
 #ifndef g_parameters__
 #define g_parameters__
 
-
 // output pins to motor driver. All Port B.
 #define G_ENABLE 0
 #define G_RIGHT_DIRECTION 1

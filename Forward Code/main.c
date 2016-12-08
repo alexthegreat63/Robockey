@@ -28,7 +28,7 @@
 #include "g_motor_drive.h"
 #include "g_parameters.h"
 
-char buffer[PACKET_LENGTH];
+char buffer[PACKET_LENGTH] = {0,0,0,0,0,0,0,0,0,0};
 bool packet_received = false;
 bool stop_flag = true;
 unsigned char score_us = 0;
@@ -62,6 +62,7 @@ int main_puck_sense_test();
 int main_ir_test();
 int main_find_puck();
 int main_goalie_test();
+int main_find_puck_test();
 
 int main(void) {
   // main_motor_test();
@@ -70,7 +71,9 @@ int main(void) {
   // main_get_location();
   // screen /dev/tty.usbmodem411
   // main_puck_sense_test();
-  main_find_puck();
+  main_find_puck(); // THIS IS THE MAIN COMPETITION FUNCTION
+  // NOTE: ADD GOTOGOAL BACK TO PUCKFIND WHEN DONE TESTING
+  // main_find_puck_test();
   // main_ir_test();
   while(1);
 }
@@ -120,6 +123,17 @@ int main_find_puck() {
   }
 }
 
+// Performs finding puck and going to goal routine
+int main_find_puck_test() {
+  init();
+  while(1) {
+    assignDirection();
+    // processPacket();
+    // getLocation();
+    puckFind();
+  }
+}
+
 // Checks to see if left sensors are working
 int main_puck_sense_test() {
   init();
@@ -140,8 +154,8 @@ int main_motor_test() {
     blueOn();
     left_stopped = false;
     right_stopped = false;
-    driveLeftMotor(true,MOTOR_SPEED);
-    driveRightMotor(true,MOTOR_SPEED);
+    driveLeftMotor(true,MOTOR_SPEED_FORWARD);
+    driveRightMotor(true,MOTOR_SPEED_FORWARD);
     //driveRightMotor(false,MOTOR_SPEED);
     //m_wait(2000);
     //driveLeftMotor(false,MOTOR_SPEED);
@@ -230,4 +244,13 @@ ISR(TIMER1_COMPC_vect) {
 /** Activated when RF packet received */
 ISR(INT2_vect) {
   packet_received = true;
+  ledOff();
+  m_wait(500);
+  if(towardB) {
+    redOn();
+  } else {
+    blueOn();
+  }
+  m_wait(500);
+  ledOff();
 }

@@ -143,25 +143,25 @@ void goToGoal() {
   if(wrapCompare(theta,theta_goal_high,midpointCompare)) {
     m_green(OFF);
     if(towardB) {
-      driveRightMotor(true,MOTOR_SPEED);
-      driveLeftMotor(false,MOTOR_SPEED);
+      driveRightMotor(true,MOTOR_SPEED_ROTATE);
+      driveLeftMotor(false,MOTOR_SPEED_ROTATE);
     } else {
-      driveRightMotor(false,MOTOR_SPEED);
-      driveLeftMotor(true,MOTOR_SPEED);
+      driveRightMotor(false,MOTOR_SPEED_ROTATE);
+      driveLeftMotor(true,MOTOR_SPEED_ROTATE);
     }
   } else if(wrapCompare(theta,theta_goal_low,midpointCompare)) {
     m_green(OFF);
     if(towardB) {
-      driveRightMotor(false,MOTOR_SPEED);
-      driveLeftMotor(true,MOTOR_SPEED);
+      driveRightMotor(false,MOTOR_SPEED_ROTATE);
+      driveLeftMotor(true,MOTOR_SPEED_ROTATE);
     } else {
-      driveRightMotor(true,MOTOR_SPEED);
-      driveLeftMotor(false,MOTOR_SPEED);
+      driveRightMotor(true,MOTOR_SPEED_ROTATE);
+      driveLeftMotor(false,MOTOR_SPEED_ROTATE);
     }
   } else {
     m_green(ON);
-    driveRightMotor(true,MOTOR_SPEED);
-    driveLeftMotor(true,MOTOR_SPEED);
+    driveRightMotor(true,MOTOR_SPEED_ROTATE);
+    driveLeftMotor(true,MOTOR_SPEED_ROTATE);
   }
   //   m_usb_tx_char('x');
   // m_usb_tx_int(positionX);
@@ -207,16 +207,15 @@ void engageTrain(int otherX, int otherY, double otherTheta) {
   if(pow(aimForX-positionX,2)+pow(aimForY-positionY,2) > TRAIN_DISTANCE) {
     if(wrapCompare(theta,thetaAimHigh,midpointCompare)) { // rotate right
       m_green(ON);
-      driveRightMotor(true,MOTOR_SPEED);
-      driveLeftMotor(false,MOTOR_SPEED);
+      driveRightMotor(true,MOTOR_SPEED_ROTATE);
+      driveLeftMotor(false,MOTOR_SPEED_ROTATE);
     } else if(wrapCompare(theta,thetaAimLow,midpointCompare)) { // rotate left
       m_green(OFF);
-      driveRightMotor(false,MOTOR_SPEED);
-      driveLeftMotor(true,MOTOR_SPEED);
+      driveRightMotor(false,MOTOR_SPEED_ROTATE);
+      driveLeftMotor(true,MOTOR_SPEED_ROTATE);
     } else {
       m_green(ON);
-      driveLeftMotor(true,MOTOR_SPEED);
-      driveRightMotor(true,MOTOR_SPEED);
+      driveForward();
     }
   } else { // if we're in the proper xy range to push
     double angleThresh = angleRange(otherTheta+M_PI);
@@ -229,8 +228,7 @@ void engageTrain(int otherX, int otherY, double otherTheta) {
       m_green(OFF);
     } else {
       m_green(ON);
-      driveLeftMotor(true,MOTOR_SPEED);
-      driveRightMotor(true,MOTOR_SPEED);
+      driveForward();
     }
   }
 }

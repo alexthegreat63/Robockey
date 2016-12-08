@@ -14,11 +14,11 @@
 #include "r_led.h"
 #include "r_parameters.h"
 
-extern char buffer[PACKET_LENGTH];
-extern bool packet_received;
-extern bool stop_flag;
-extern unsigned char score_us;
-extern unsigned char score_them;
+ extern char buffer[];
+ extern bool packet_received;
+ extern bool stop_flag;
+ extern unsigned char score_us;
+ extern unsigned char score_them;
 
 /* Wii variables */
 extern unsigned int blobs[]; // 12 element buffer for Wii data
@@ -34,13 +34,18 @@ extern bool towardB; // direction of robot: 1 towards B, 0 towards A
 extern bool isBlue; // Indicates team color of robot.
 
 void processPacket() {
+  char buf[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   if(packet_received == true) {
     packet_received = false;
-    m_rf_read(buffer, PACKET_LENGTH);
-    
-    if(buffer[0] == 0xA0) { // Comm Test
+    if(m_rf_read(buf, PACKET_LENGTH)) {
+      m_green(ON);
+    }
+    if(buf[0] == 0xA0) { // Comm Test
+      m_red(ON);
+      m_wait(1000);
+      m_red(OFF);
       stop_flag = true;
-      if(isBlue) {
+      if(!towardB) {
         ledOff();
         m_wait(1000);
         blueOn();
@@ -75,7 +80,7 @@ void processPacket() {
     }
     else if(buffer[0] == 0xA3) { // Goal B
       stop_flag = true;
-      if(towardB == 0) {
+      if(towardB == false) {
         score_us = buffer[2];
         score_them = buffer[3];
       }

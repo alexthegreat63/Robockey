@@ -1,0 +1,631 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"MOTOR",
+				"MOTOR_SPEED_FORWARD"
+			],
+			[
+				"main_find",
+				"main_find_puck_test"
+			],
+			[
+				"thet",
+				"theta_goal_high"
+			],
+			[
+				"theta",
+				"theta_goal_low"
+			],
+			[
+				"theta_goal",
+				"theta_goal_low"
+			],
+			[
+				"TRAIN",
+				"TRAIN_THETA_PAD"
+			],
+			[
+				"y_goal",
+				"y_goal_right"
+			],
+			[
+				"y_goal_",
+				"y_goal_low"
+			],
+			[
+				"theta_",
+				"theta_goal_low"
+			],
+			[
+				"positi",
+				"positionY"
+			],
+			[
+				"x",
+				"x"
+			],
+			[
+				"righ",
+				"right_stopped"
+			],
+			[
+				"drive",
+				"driveLeftMotor"
+			],
+			[
+				"aimFor",
+				"aimForX"
+			],
+			[
+				"otherUnit",
+				"otherUnitY"
+			],
+			[
+				"RED",
+				"RED"
+			],
+			[
+				"towar",
+				"towardB"
+			],
+			[
+				"LED",
+				"LED_IN"
+			],
+			[
+				"LEFT",
+				"LEFT_SENSOR"
+			],
+			[
+				"RIGH",
+				"RIGHT_SENSOR"
+			],
+			[
+				"left",
+				"LEFT_SENSOR"
+			],
+			[
+				"X_GOAL_",
+				"X_GOAL_A"
+			],
+			[
+				"Y_GOAL",
+				"Y_GOAL_A_LOW"
+			],
+			[
+				"Y_",
+				"Y_GOAL_B_LOW"
+			],
+			[
+				"tow",
+				"towardB"
+			],
+			[
+				"main_",
+				"main_get_location"
+			],
+			[
+				"main",
+				"main_motor_test"
+			],
+			[
+				"assign",
+				"assignDirection"
+			],
+			[
+				"init",
+				"init_usb"
+			],
+			[
+				"0X",
+				"0xFFFF"
+			],
+			[
+				"D2",
+				"D2max"
+			],
+			[
+				"D",
+				"Dmax"
+			],
+			[
+				"st",
+				"starLocSize"
+			],
+			[
+				"star",
+				"starLocations"
+			],
+			[
+				"missedPint",
+				"missedPointPrev"
+			],
+			[
+				"missed",
+				"missedPoint"
+			],
+			[
+				"miss",
+				"missedPoint"
+			],
+			[
+				"RIGHT",
+				"RIGHT_ENABLE"
+			],
+			[
+				"OCR1B",
+				"OCR1B_note_vals"
+			],
+			[
+				"OCR",
+				"OCR1B_note_vals"
+			],
+			[
+				"OCR1",
+				"OCR1B_note_vals"
+			],
+			[
+				"sin",
+				"sin_vect"
+			],
+			[
+				"curr",
+				"currIndex"
+			],
+			[
+				"sin_vect",
+				"sin_vect_scaled"
+			],
+			[
+				"ACCEL",
+				"ACCEL_OFFSET"
+			],
+			[
+				"clear",
+				"clear"
+			],
+			[
+				"m_usb_",
+				"m_usb_rx_char"
+			],
+			[
+				"packet",
+				"packet_received"
+			],
+			[
+				"PIN_",
+				"PIN_HIGH"
+			],
+			[
+				"PIN",
+				"PIN_OUT"
+			],
+			[
+				"set",
+				"set"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "Forward Code/r_hockey_playing.c",
+			"settings":
+			{
+				"buffer_size": 7420,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Forward Code/r_init.c",
+			"settings":
+			{
+				"buffer_size": 3722,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Forward Code/r_led.c",
+			"settings":
+			{
+				"buffer_size": 1160,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/g_parameters.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/g_parameters.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_geometry.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_parameters.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_parameters.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_motor_drive.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_puck_sense.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_init.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_hockey_playing.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/main.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_motor_drive.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_rf.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/g_goalkeeping.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/g_motor_drive.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/g_goalkeeping.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/.gitignore",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/g_init.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/g_init.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/g_motor_drive.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/Makefile",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_led.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_wii.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_usb.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_geometry.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_hockey_playing.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_rf.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Forward Code/r_init.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Goalie Code/init.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/r_parameters.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/r_parameters.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/r_hockey_playing.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/main.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/Makefile",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_hockey_playing.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_led.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_motor_drive.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_puck_sense.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_rf.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_usb.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_wii.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_hockey_playing.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Code Org.txt",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_parameters.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_parameters.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_localize.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/m_wii.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/m_wii.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_globals.c",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/init.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_init.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_globals.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/r_usb",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/globals.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Refactor Test/m_usb.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/Robockey/Robockey Code/init.h",
+		"/Users/alexanderkearns/Documents/Penn_Fall_2016/Mechatronics/L3/2.2.1/main.c",
+		"/Users/alexanderkearns/Documents/Aezon/XPrize_App_Test_LATEST UTI/XPrize-v3/XPrize-v3/Instructions.xcassets/Contents.json"
+	],
+	"find":
+	{
+		"height": 36.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": true,
+		"find_history":
+		[
+			"puck",
+			"find_",
+			"process",
+			"find_",
+			"main_find",
+			"find_puck",
+			"puck_find",
+			"puckFind",
+			"main_goalie",
+			"ENABLE",
+			"enable",
+			"main_goalie",
+			"goal_test",
+			"main_goal",
+			"find",
+			"getlocation",
+			"gotogoal",
+			"main_find",
+			"puck_sense",
+			"assign",
+			"motor",
+			"redon",
+			"puck_right",
+			"motor",
+			"check",
+			"puck",
+			"puckfind",
+			"front",
+			"front_left",
+			"gotogo",
+			"gotogoal",
+			"puckfind",
+			"drive",
+			"getlocation",
+			"led",
+			"ked",
+			"blueon",
+			"process",
+			"processpacket",
+			"printloc",
+			"getloc",
+			"usb",
+			"extern",
+			"init",
+			"puckfind",
+			"process",
+			"comm",
+			"main_comm",
+			"blueon",
+			"blue",
+			"clear(PORTF,BLUE",
+			"red",
+			"red_on",
+			"redon",
+			"red",
+			"(",
+			"blue",
+			"assigndirection",
+			"assignDirection",
+			"led_in",
+			"BLUE",
+			"check",
+			"direction",
+			"setdirection",
+			"assigndirection",
+			"init",
+			"goto",
+			"motorTest",
+			"motor_test",
+			"num_pulses_per_note",
+			"m_green",
+			"num",
+			"turnspeaker",
+			"green",
+			"note_count",
+			"ocr1b_note_vals",
+			"ocr1b",
+			"50",
+			"100",
+			"180",
+			"sin_vect",
+			"OCR1A",
+			"frequency",
+			"sine_num",
+			"num_pulses_per",
+			"low_pass",
+			"high pass",
+			"accel",
+			"accel_offset",
+			"gyro_offset",
+			"670",
+			"max",
+			"time_step",
+			"ocr1b",
+			"ocr1a",
+			"enable",
+			"ocr1b",
+			"portb",
+			"ddrb",
+			"portb",
+			"portd",
+			"wait",
+			"data",
+			"usb",
+			"red",
+			"usb",
+			"green",
+			"m_green",
+			"objects",
+			"PIN_OUT",
+			"theta",
+			"timsk",
+			"timski",
+			"num_",
+			"count",
+			" ",
+			"PIN",
+			"interrupt",
+			" /string>",
+			" string>",
+			"otitis media",
+			"head",
+			"string"
+		],
+		"highlight": false,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"",
+			"PIN_HIGH",
+			"sin_vect",
+			","
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "Forward Code/r_hockey_playing.c",
+					"settings":
+					{
+						"buffer_size": 7420,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								904,
+								904
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "Forward Code/r_init.c",
+					"settings":
+					{
+						"buffer_size": 3722,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1711.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "Forward Code/r_led.c",
+					"settings":
+					{
+						"buffer_size": 1160,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								929,
+								929
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/C++/C.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 0.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 100.0
+	},
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true
+}

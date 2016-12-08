@@ -64,18 +64,18 @@ void driveRightMotor(bool direction, unsigned int duty) {
 }
 
 void rotateRight() {
-  driveLeftMotor(true, MOTOR_SPEED);
-  driveRightMotor(false,MOTOR_SPEED);
+  driveLeftMotor(true, MOTOR_SPEED_ROTATE);
+  driveRightMotor(false,MOTOR_SPEED_ROTATE);
 }
 
 void rotateLeft() {
-  driveLeftMotor(false, MOTOR_SPEED);
-  driveRightMotor(true,MOTOR_SPEED);
+  driveLeftMotor(false, MOTOR_SPEED_ROTATE);
+  driveRightMotor(true,MOTOR_SPEED_ROTATE);
 }
 
 void driveForward() {
-  driveRightMotor(true,MOTOR_SPEED);
-  driveLeftMotor(true,MOTOR_SPEED);
+  driveRightMotor(true,MOTOR_SPEED_FORWARD);
+  driveLeftMotor(true,MOTOR_SPEED_FORWARD);
 }
 
 void stopLeft() {
