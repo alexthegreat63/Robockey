@@ -11,7 +11,6 @@
  * Comment out all mains but main competition function
  * Assign proper address (40 or 41)
  * Comment goalie interrupts at bottom; uncomment normal interrupts
- * Make sure left_stopped and right_stopped are true
  * 
  * Goalie:
  * Comment out all forward interrupts at bottom; uncomment goalie interrupts
@@ -82,7 +81,7 @@ int main_goalie_test();
 int main_goalie_motor();
 
 int main(void) {
-  // main_find_puck(); // THIS IS THE MAIN COMPETITION FUNCTION - contains comms
+  main_find_puck(); // THIS IS THE MAIN COMPETITION FUNCTION - contains comms
   // main_goal_test(); // test going to goal (no comms)
   // main_find_puck_no_comms(); // Test whole workflow with no comms
   // main_motor_test();
@@ -96,11 +95,23 @@ int main(void) {
   // main_comm_test();
 
   /* Goalkeeper */
-  //main_goalie(); // COMPETITION FUNCTION FOR GOALIE
-  main_goalie_test();
+  // main_goalie(); // COMPETITION FUNCTION FOR GOALIE
+  // main_goalie_test();
   // main_goalie_motor();
 
   while(1);
+}
+
+int main_goalie() {
+  g_init();
+  while(1) {
+    processPacket();
+    assignDirection();
+    getLocation();
+    if(!stop_flag) {
+      g_puckFind();
+    }
+  }
 }
 
 int main_goalie_test() {
@@ -264,39 +275,39 @@ void assignDirection() {
 
 /** Forward motor interrupts */
 // Overflow actions (enable both motors)
-// ISR(TIMER1_OVF_vect) {
-//   if(!left_stopped) {
-//    set(PORTB,LEFT_ENABLE);
-//   }
-//   if(!right_stopped) {
-//     set(PORTB,RIGHT_ENABLE);
-//   }
-// }
-
-// // Channel B actions (turn off left motor)
-// ISR(TIMER1_COMPB_vect) {
-//   clear(PORTB,LEFT_ENABLE);
-// }
-
-// // Channel C actions (turn off right motor)
-// ISR(TIMER1_COMPC_vect) {
-//   clear(PORTB,RIGHT_ENABLE);
-// }
-
-/** Goalie motor interrupts */
-// Overflow actions (enable both motors)
 ISR(TIMER1_OVF_vect) {
-  if(!stop_flag) {
-   set(PORTB,G_ENABLE_1);
-   set(PORTB,G_ENABLE_2);
+  if(!left_stopped) {
+   set(PORTB,LEFT_ENABLE);
+  }
+  if(!right_stopped) {
+    set(PORTB,RIGHT_ENABLE);
   }
 }
 
 // Channel B actions (turn off left motor)
 ISR(TIMER1_COMPB_vect) {
-  clear(PORTB,G_ENABLE_1);
-  clear(PORTB,G_ENABLE_2);
+  clear(PORTB,LEFT_ENABLE);
 }
+
+// Channel C actions (turn off right motor)
+ISR(TIMER1_COMPC_vect) {
+  clear(PORTB,RIGHT_ENABLE);
+}
+
+/** Goalie motor interrupts */
+// Overflow actions (enable both motors)
+// ISR(TIMER1_OVF_vect) {
+//   if(!left_stopped) {
+//    set(PORTB,G_ENABLE_1);
+//    set(PORTB,G_ENABLE_2);
+//   }
+// }
+
+// // Channel B actions (turn off left motor)
+// ISR(TIMER1_COMPB_vect) {
+//   clear(PORTB,G_ENABLE_1);
+//   clear(PORTB,G_ENABLE_2);
+// }
 
 /** Activated when RF packet received */
 ISR(INT2_vect) {

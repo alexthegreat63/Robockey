@@ -15,9 +15,9 @@
 #define G_LEFT_DIRECTION_2 3
 
 // input pins for IR sensors. All Port D.
-#define G_LEFT_SENSOR 3
-#define G_RIGHT_SENSOR 4
-#define G_FRONT_SENSOR 5
+#define G_LEFT_SENSOR 5
+#define G_RIGHT_SENSOR 3
+#define G_FRONT_SENSOR 4
 // #define PUCK_SENSOR 6
 
 #define G_X_GOAL_RED -263 

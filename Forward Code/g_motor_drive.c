@@ -58,5 +58,5 @@ void g_driveMotor(bool direction_left) {
 }
 
 void g_stop() {
-  stop_flag = true;
+  left_stopped = true;
 }

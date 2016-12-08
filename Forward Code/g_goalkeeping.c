@@ -68,10 +68,14 @@ void g_puckFind() {
     if(towardB) {
        if(positionY <= G_Y_GOAL_RED_HIGH) { // if we are in 
         g_driveMotor(true); // drive motor left
+       } else {
+        g_stop();
        }
     } else {
       if(positionY >= G_Y_GOAL_BLUE_LOW) {
         g_driveMotor(true);
+      } else {
+        g_stop();
       }
     }
   } else if(!check(PIND,G_RIGHT_SENSOR)) { // if puck is to right
@@ -80,10 +84,14 @@ void g_puckFind() {
     if(towardB) {
        if(positionY >= G_Y_GOAL_RED_LOW) { // if we are in 
         g_driveMotor(false); // drive motor left
+       } else {
+        g_stop();
        }
     } else {
       if(positionY <= G_Y_GOAL_BLUE_HIGH) {
         g_driveMotor(false);
+      } else {
+        g_stop();
       }
     }
   } else { // default state: stop
