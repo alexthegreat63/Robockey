@@ -37,7 +37,7 @@ void processPacket() {
   char buf[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
   if(packet_received == true) {
     packet_received = false;
-    if(m_rf_read(buf, PACKET_LENGTH)) {
+    if(m_rf_read(buffer, 10)) {
       m_green(ON);
     }
     if(buf[0] == 0xA0) { // Comm Test

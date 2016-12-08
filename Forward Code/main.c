@@ -28,7 +28,7 @@
 #include "g_motor_drive.h"
 #include "g_parameters.h"
 
-char buffer[PACKET_LENGTH] = {0,0,0,0,0,0,0,0,0,0};
+char buffer[10] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 bool packet_received = false;
 bool stop_flag = true;
 unsigned char score_us = 0;

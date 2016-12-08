@@ -13,7 +13,7 @@
 #include "m_bus.h"
 #include "m_rf.h"
 
-extern char buffer[PACKET_LENGTH];
+extern char buffer[10];
 extern bool packet_received;
 extern bool stop_flag;
 extern unsigned char score_us;
