@@ -42,7 +42,7 @@ void puckFind() {
     /* wait 250 ms */
     puck_count = 0;
     timer_on = true;
-    while(puck_count < 100) {
+    while(puck_count < 160) {
     }
     timer_on = false;
 
