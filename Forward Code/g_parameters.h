@@ -21,11 +21,11 @@
 // #define PUCK_SENSOR 6
 
 #define G_X_GOAL_RED -263 
-#define G_Y_GOAL_RED_HIGH 35
-#define G_Y_GOAL_RED_LOW -118
+#define G_Y_GOAL_RED_HIGH 87
+#define G_Y_GOAL_RED_LOW -80
 #define G_X_GOAL_BLUE 310
-#define G_Y_GOAL_BLUE_HIGH 84
-#define G_Y_GOAL_BLUE_LOW -49
+#define G_Y_GOAL_BLUE_HIGH 120
+#define G_Y_GOAL_BLUE_LOW -152
 
 // output pins for blue/red LEDs. All Port F.
 // #define G_BLUE 5

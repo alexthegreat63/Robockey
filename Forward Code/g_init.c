@@ -52,8 +52,6 @@ void g_init(void) {
 
    m_disableJTAG();
 
-   stop_flag = true;
-
   /*
    * Motor Timer Setups
    */

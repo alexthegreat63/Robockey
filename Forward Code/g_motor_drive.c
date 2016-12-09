@@ -46,7 +46,7 @@ extern bool g_stopped;
  *  duty (0xFFFF = 100% duty, 0 = 0% duty)
  */
 void g_driveMotor(bool direction_left) {
-	stop_flag = false;
+  g_stopped = false;
   if(direction_left) {
     set(PORTB,G_LEFT_DIRECTION_1);
     set(PORTB,G_LEFT_DIRECTION_2);
@@ -58,5 +58,5 @@ void g_driveMotor(bool direction_left) {
 }
 
 void g_stop() {
-  left_stopped = true;
+  g_stopped = true;
 }

@@ -42,18 +42,18 @@ void processPacket() {
       case 0xA0:
         ledOff();
         if(towardB) {
-          redOn();
-          m_wait(500);
           ledOff();
           m_wait(500);
           redOn();
+          m_wait(500);
+          ledOff();
           m_wait(500);
         } else {
-          blueOn();
-          m_wait(500);
           ledOff();
           m_wait(500);
           blueOn();
+          m_wait(500);
+          ledOff();
           m_wait(500);
         }
         break;

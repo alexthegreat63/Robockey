@@ -8,11 +8,13 @@
  * 
  * Tournament instructions:
  * Forward:
+ * Make sure stop_flag = true; in the main function
  * Comment out all mains but main competition function
- * Assign proper address (40 or 41)
+ * Assign proper address (40 or 41) in r_parameters.h
  * Comment goalie interrupts at bottom; uncomment normal interrupts
  * 
  * Goalie:
+ * Make sure stop_flag = true; in the main function
  * Comment out all forward interrupts at bottom; uncomment goalie interrupts
  * Comment all other main functions except main_goalie
  * make sure g_stopped is true
@@ -41,7 +43,7 @@
 
 char buffer[PACKET_LENGTH] = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
 bool packet_received = false;
-bool stop_flag = true;
+bool stop_flag = true; // WHEN STOP COMMAND IS ISSUED, TRUE
 unsigned char score_us = 0;
 unsigned char score_them = 0;
 
@@ -58,9 +60,9 @@ double positionY; // robot's current y position
 bool towardB = false; // direction of robot: 1 towards B, 0 towards A
 // bool isBlue = false; // Indicates team color of robot.
 
-bool left_stopped = true;
-bool right_stopped = true;
-bool g_stopped = true;
+bool left_stopped = true; // when left and right motors are stopped by us (not command)
+bool right_stopped = true; // when left and right motors are stopped by us (not command)
+bool g_stopped = true; // when goalie is stopped by us (not command)
 
 /* Method Declarations */
 void init(void);
@@ -81,6 +83,7 @@ int main_goalie_test();
 int main_goalie_motor();
 
 int main(void) {
+  stop_flag = true;
   main_find_puck(); // THIS IS THE MAIN COMPETITION FUNCTION - contains comms
   // main_goal_test(); // test going to goal (no comms)
   // main_find_puck_no_comms(); // Test whole workflow with no comms
@@ -95,6 +98,7 @@ int main(void) {
   // main_comm_test();
 
   /* Goalkeeper */
+  // stop_flag = true;
   // main_goalie(); // COMPETITION FUNCTION FOR GOALIE
   // main_goalie_test();
   // main_goalie_motor();
@@ -108,8 +112,22 @@ int main_goalie() {
     processPacket();
     assignDirection();
     getLocation();
-    if(!stop_flag) {
-      g_puckFind();
+    g_puckFind();
+  }
+}
+
+// Performs finding puck and going to goal routine
+int main_find_puck() {
+  init();
+  driveForward();
+  while(1) { // if play command issued, will start
+    assignDirection();
+    processPacket();
+    getLocation();
+    if(stop_flag) {
+      driveForward();
+    } else {
+      puckFind();
     }
   }
 }
@@ -132,22 +150,6 @@ int main_goalie_motor() {
       g_driveMotor(true); // turn motors right
     } else {
       g_stop();
-    }
-  }
-}
-
-// Performs finding puck and going to goal routine
-int main_find_puck() {
-  init();
-  while(1) {
-    assignDirection();
-    processPacket();
-    if(stop_flag) {
-      stopLeft();
-      stopRight();
-    } else {
-      getLocation();
-      puckFind();
     }
   }
 }
@@ -218,10 +220,8 @@ int main_motor_test() {
   init();
   while(1) {
     blueOn();
-    left_stopped = false;
-    right_stopped = false;
-    driveLeftMotor(true,MOTOR_SPEED_FORWARD);
-    driveRightMotor(true,MOTOR_SPEED_FORWARD);
+    // driveLeftMotor(true,MOTOR_SPEED_FORWARD);
+    // driveRightMotor(true,MOTOR_SPEED_FORWARD);
     //driveRightMotor(false,MOTOR_SPEED);
     //m_wait(2000);
     //driveLeftMotor(false,MOTOR_SPEED);
@@ -274,37 +274,36 @@ void assignDirection() {
 }
 
 /** Forward motor interrupts */
-// Overflow actions (enable both motors)
-ISR(TIMER1_OVF_vect) {
-  if(!left_stopped) {
+
+ISR(TIMER1_OVF_vect) { /** Overflow actions (enable both motors) */
+  if(!left_stopped && !stop_flag) {
    set(PORTB,LEFT_ENABLE);
   }
-  if(!right_stopped) {
+  if(!right_stopped && !stop_flag) {
     set(PORTB,RIGHT_ENABLE);
   }
 }
 
-// Channel B actions (turn off left motor)
-ISR(TIMER1_COMPB_vect) {
+
+ISR(TIMER1_COMPB_vect) { /** Channel B actions (turn off left motor)  */
   clear(PORTB,LEFT_ENABLE);
 }
-
-// Channel C actions (turn off right motor)
-ISR(TIMER1_COMPC_vect) {
+ 
+ISR(TIMER1_COMPC_vect) { /** Channel C actions (turn off right motor) */
   clear(PORTB,RIGHT_ENABLE);
 }
 
 /** Goalie motor interrupts */
-// Overflow actions (enable both motors)
-// ISR(TIMER1_OVF_vect) {
-//   if(!left_stopped) {
+
+// ISR(TIMER1_OVF_vect) { /* Overflow actions (enable both motors) */
+//   if(!g_stopped && !stop_flag) {
 //    set(PORTB,G_ENABLE_1);
 //    set(PORTB,G_ENABLE_2);
 //   }
 // }
 
-// // Channel B actions (turn off left motor)
-// ISR(TIMER1_COMPB_vect) {
+
+// ISR(TIMER1_COMPB_vect) { /** Channel B actions (turn off left motor)  */
 //   clear(PORTB,G_ENABLE_1);
 //   clear(PORTB,G_ENABLE_2);
 // }

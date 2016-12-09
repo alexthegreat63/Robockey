@@ -58,21 +58,17 @@ void g_assignDirection() {
 
 // Seek puck
 void g_puckFind() {
-  if(!check(PIND, G_FRONT_SENSOR)) { // if puck is directly ahead
-    g_stop(); // stop motors
-    m_red(ON);
-    m_green(ON);
-  } else if(!check(PIND,G_LEFT_SENSOR)) { // if puck is to left
+  if(!check(PIND,G_LEFT_SENSOR)) { // if puck is to left
     m_red(OFF);
     m_green(ON);
     if(towardB) {
-       if(positionY <= G_Y_GOAL_RED_HIGH) { // if we are in 
+       if(positionY >= G_Y_GOAL_RED_LOW) { // if we are in 
         g_driveMotor(true); // drive motor left
        } else {
         g_stop();
        }
     } else {
-      if(positionY >= G_Y_GOAL_BLUE_LOW) {
+      if(positionY <= G_Y_GOAL_BLUE_HIGH) {
         g_driveMotor(true);
       } else {
         g_stop();
@@ -82,19 +78,25 @@ void g_puckFind() {
         m_red(ON);
     m_green(OFF);
     if(towardB) {
-       if(positionY >= G_Y_GOAL_RED_LOW) { // if we are in 
-        g_driveMotor(false); // drive motor left
+       if(positionY <= G_Y_GOAL_RED_HIGH) { // if we are in 
+        g_driveMotor(false); // drive motor right
        } else {
         g_stop();
        }
     } else {
-      if(positionY <= G_Y_GOAL_BLUE_HIGH) {
+      if(positionY >= G_Y_GOAL_BLUE_LOW) {
         g_driveMotor(false);
       } else {
         g_stop();
       }
     }
-  } else { // default state: stop
+  } else  if(!check(PIND, G_FRONT_SENSOR)) { // if puck is directly ahead
+    g_stop(); // stop motors
+    m_red(ON);
+    m_green(ON);
+  }
+  else { // default state: stop
+    g_stop();
     m_red(OFF);
     m_green(OFF);
     // keep doing what we were doing as long as we're in bounds

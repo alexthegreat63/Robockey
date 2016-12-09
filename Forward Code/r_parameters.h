@@ -50,7 +50,7 @@
  //Levin Lobby
 #define X_GOAL_RED -263 
 #define Y_GOAL_RED_HIGH 35
-#define Y_GOAL_RED_LOW -118
+#define Y_GOAL_RED_LOW -100
 #define X_GOAL_BLUE 310
 #define Y_GOAL_BLUE_HIGH 84
 #define Y_GOAL_BLUE_LOW -49
