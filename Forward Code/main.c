@@ -64,6 +64,9 @@ bool left_stopped = true; // when left and right motors are stopped by us (not c
 bool right_stopped = true; // when left and right motors are stopped by us (not command)
 bool g_stopped = true; // when goalie is stopped by us (not command)
 
+volatile unsigned int puck_count; // number of total cycles to get 250ms delay. /0.25s((65535 clock cycles/timer overflow)/(16MHz))
+volatile bool timer_on = false;
+
 /* Method Declarations */
 void init(void);
 void assignDirection();
@@ -281,6 +284,9 @@ ISR(TIMER1_OVF_vect) { /** Overflow actions (enable both motors) */
   }
   if(!right_stopped && !stop_flag) {
     set(PORTB,RIGHT_ENABLE);
+  }
+  if(timer_on) {
+    puck_count++;
   }
 }
 

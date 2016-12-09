@@ -32,11 +32,20 @@ extern double positionY; // robot's current y position
 extern bool towardB; // direction of robot: 1 towards B, 0 towards A
 extern bool isBlue; // Indicates team color of robot.
 
+extern volatile unsigned int puck_count; // number of total cycles to get 250ms delay. /0.25s((65535 clock cycles/timer overflow)/(16MHz))
+extern volatile bool timer_on; // turns on when we want the delay clock going, otherwise off
 
 // Seek puck
 void puckFind() {
   if(!check(PIND, PUCK_LEFT_SENSOR) && !check(PIND, PUCK_RIGHT_SENSOR)) { // if puck is in our posession
-    m_wait(250);
+    // m_wait(250);
+    /* wait 250 ms */
+    puck_count = 0;
+    timer_on = true;
+    while(puck_count < 61) {
+    }
+    timer_on = false;
+
     m_red(ON);
     // driveForward();
     m_green(ON);
