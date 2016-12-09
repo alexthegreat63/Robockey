@@ -35,7 +35,7 @@
 
 //RF Parameters:
 #define CHANNEL 1
-#define ADDRESS 41 // address for robot 1
+#define ADDRESS 40 // address for robot 1
 #define GOALIE_ADDRESS 42 // address for goalie
 #define PACKET_LENGTH 10 // bytes
 
@@ -47,7 +47,7 @@
 // #define X_GOAL_BLUE 322
 // #define Y_GOAL_BLUE_HIGH 74
 // #define Y_GOAL_BLUE_LOW -73
- //Levin Lobby
+ //Levine Lobby
 #define X_GOAL_RED -263 
 #define Y_GOAL_RED_HIGH 35
 #define Y_GOAL_RED_LOW -100
